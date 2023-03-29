@@ -9,10 +9,10 @@ class DRGO_env():
         self.lamda = args.lamda
         self.N_User = args.user_num
         self.G_CU_list = np.ones((self.N_User, 1))  # User directivity
-        self.G_BS_t = 1                             # BS directivity
-        self.Z_u = 10000                            # Data size
-        self.Num_BS = 1                             # Number of Base Stations
-        self.N_User = 10                            # Number of Users
+        self.G_BS_t = 1  # BS directivity
+        self.Z_u = 10000  # Data size
+        self.Num_BS = 1  # Number of Base Stations
+        self.N_User = 10  # Number of Users
 
         # Power setting
         self.P = args.power
@@ -64,10 +64,9 @@ class DRGO_env():
         self.observation_space = self._wrapState().squeeze()
         self.action_space = self._wrapAction()
 
-
     def _channelGain_BS_CU(self):
         """     Free-space path los     """
-        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)    # Directivity_BS * Directivity_CU * lambda
+        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)  # Directivity_BS * Directivity_CU * lambda
         denominator = ((4 * np.pi) ** 3) * (self.distance_CU_BS ** 4)
         channelGain = numerator / denominator
         return channelGain
