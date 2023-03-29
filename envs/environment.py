@@ -65,7 +65,8 @@ class DRGO_env():
 
 
     def _channelGain_BS_CU(self):
-        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)
+        """     Free-space path los     """
+        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)    # Directivity_BS * Directivity_CU * lambda
         denominator = ((4 * np.pi) ** 3) * (self.distance_CU_BS ** 4)
         channelGain = numerator / denominator
         return channelGain

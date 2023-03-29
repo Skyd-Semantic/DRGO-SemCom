@@ -29,11 +29,13 @@ def get_arguments():
                         help="Trigger the clustering to get salient feature of specific categories")
 
     # --------------------- Environment config
-    parser.add_argument("--noise", type=str, default=0.01,
+    parser.add_argument("--noise", type=float, default=0.01,
                         help="network noise")
+    parser.add_argument("--lamda", type=float, default=1,
+                        help="channel gain coefficient")
+    parser.add_argument("--user-num", type=int, default=10,
+                        help="number of users")
     parser.add_argument("--lamda", type=str, default=0.001,
-                        help="network noise")
-    parser.add_argument("--gamma", type=str, default=0.001,
-                        help="network noise")
+                        help="signal wave length")
 
     return parser.parse_args()
