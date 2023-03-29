@@ -28,48 +28,12 @@ def get_arguments():
     parser.add_argument("--f-cluster", type=bool, default=True,
                         help="Trigger the clustering to get salient feature of specific categories")
 
-    # --------------------- model config
-    parser.add_argument("--encoder", type=str, default="dense",
-                        help="model type CVAE")
-
-    parser.add_argument("--shared-size", type=list, default=[784, 784],
-                        help="shared network layer size")
-    parser.add_argument("--en_size", type=list, default=[784, 784, 512, 256],
-                        help="encoder layer size")
-    parser.add_argument("--de_size", type=list, default=[256, 512, 784, 784],
-                        help="decoder layer size")
-
-    parser.add_argument("--s-latent-size", type=int, default=784,
-                        help="shared network latent size")
-    parser.add_argument("--latent-size", type=int, default=128,
-                        help="Embedding vector size")
-
-    # --------------------- train config
-    parser.add_argument("--epochs", type=int, default=100,
-                        help="number of training epochs")
-    parser.add_argument("--lr", type=float, default=0.005,
-                        help="learning rate")
-    parser.add_argument("--wd", type=float, default=1e-6,
-                        help="weight decay")
-    parser.add_argument("--batch-size", type=int, default=128,
-                        help="Data batch size")
-    parser.add_argument("--scaler", type=bool, default=False,
-                        help="Trigger the torch scaler function")
-    # --------------------- meta config
-    parser.add_argument('--n_way', type=int, help='n way', default=5)
-    parser.add_argument('--k_spt', type=int, help='k shot for support set', default=1)
-    parser.add_argument('--k_qry', type=int, help='k shot for query set', default=15)
-    parser.add_argument('--task_num', type=int, default=10,
-                        help='number of tasks (should be equal to number of classes/clusters)')
-    parser.add_argument('--meta_lr', type=float, help='meta-level outer learning rate', default=1e-3)
-    parser.add_argument('--update_lr', type=float, help='task-level inner update learning rate', default=0.01)
-    parser.add_argument('--update_step', type=int, help='task-level inner update steps', default=5)
-    parser.add_argument('--update_step_test', type=int, help='update steps for fine-tunning', default=10)
-    # --------------------- pretrain config
-    parser.add_argument("--pretrain-iterations", type=int,
-                        help="number of pretraining iterations", default=0)
-    parser.add_argument("--meta-train-iterations", type=int,
-                        help="number of meta-training iterations", default=1000)
-    # --------------------- loss config
+    # --------------------- Environment config
+    parser.add_argument("--noise", type=str, default=0.01,
+                        help="network noise")
+    parser.add_argument("--lamda", type=str, default=0.001,
+                        help="network noise")
+    parser.add_argument("--gamma", type=str, default=0.001,
+                        help="network noise")
 
     return parser.parse_args()

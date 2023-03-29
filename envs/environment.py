@@ -5,9 +5,8 @@ from utils.setting_setup import *
 class DRGO_env():
     def __init__(self, args):
         # Network setting
-        self.noise = args.noies
+        self.noise = args.noise
         self.lamda = args.lamda
-        self.gamma = args.gamma
         self.N_User = args.user_num
         self.G_CU_list = np.ones((self.N_User, 1))
         self.G_BS_t = 1
@@ -31,7 +30,9 @@ class DRGO_env():
         self.BS_R_Range = 1
         self.BS_R_min = 0.1
 
+        """ ========================================= """
         """ ===== Function-based Initialization ===== """
+        """ ========================================= """
         self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)
         self.U_location = self._location_CU_Generator()
         self.User_trajectory = self._trajectory_U_Generator()
@@ -43,7 +44,10 @@ class DRGO_env():
         # Channel Gain
         # self.H_CU = self._channelGain_BS_CU()
         self.Pathloss = self._Pathloss_Calculated()
-        # Action
+
+        """ =============== """
+        """     Actions     """
+        """ =============== """
         self.o = np.reshape(np.random.randint(0, self.N_User, size=self.N_User), self.N_User)
         # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_sub-1] (0 means Sub#1)
         self.tau = np.reshape(np.random.randint(0, self.N_User, size=self.N_User), self.N_User)
@@ -52,15 +56,13 @@ class DRGO_env():
 
         self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), self.N_User)
 
-        #  Env setting
+        """ ============================ """
+        """     Environment Settings     """
+        """ ============================ """
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
         self.action_space = self._wrapAction()
-        # self.reward_space      = np.array(())
 
-        # self.observation_space = self._wrapState().squeeze()
-        # self.action_space      = self._wrapAction().squeeze()
-        # self.reward_space      = np.array(())
 
     def _channelGain_BS_CU(self):
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)
