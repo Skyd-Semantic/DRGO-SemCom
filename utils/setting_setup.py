@@ -35,7 +35,16 @@ def get_arguments():
                         help="channel gain coefficient")
     parser.add_argument("--user-num", type=int, default=10,
                         help="number of users")
-    parser.add_argument("--lamda", type=str, default=0.001,
+    parser.add_argument("--lamda", type=float, default=1,
                         help="signal wave length")
+    parser.add_argument("--power", type=float, default=1,
+                        help="signal wave length")
+    parser.add_argument("--poweru_max", type=float, default=2,
+                        help="signal wave length")
+    parser.add_argument("--power0", type=float, default=1,
+                        help="signal wave length")
+    parser.add_argument("--powern", type=float, default=1,
+                        help="signal wave length")
+
 
     return parser.parse_args()
