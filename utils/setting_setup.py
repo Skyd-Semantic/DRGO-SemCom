@@ -54,5 +54,8 @@ def get_arguments():
     parser.add_argument("--bandwidth", type=float, default=1000,
                         help="signal bandwidth")
 
-
+    """ ======================================================== """
+    """ ===================== Agent config ===================== """
+    """ ======================================================== """
+    
     return parser.parse_args()
