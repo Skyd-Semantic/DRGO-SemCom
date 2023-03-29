@@ -1,7 +1,9 @@
 import numpy as np
+from utils.setting_setup import *
 
-class Env():
-    def __init__(self, args, N_user, noise):
+
+class DRGO_env():
+    def __init__(self, args):
         # Network setting
         self.noise = args.noies
         self.lamda = args.lamda
@@ -218,4 +220,8 @@ class Env():
 
     def close(self):
         pass
-    # def reset(self):
+
+
+if __name__ == '__main__':
+    args = get_arguments()
+    env = DRGO_env(args)
