@@ -1,8 +1,6 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
+from agents.ddpg.agent import *
+from utils.setting_setup import *
+from envs.environment import *
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -11,4 +9,13 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    pass
+    args = get_arguments()
+
+    env = DRGO_env(args)
+
+    agent = DDPGAgent(
+        args,
+        env
+    )
+    agent.train(num_frames, num_ep)
+

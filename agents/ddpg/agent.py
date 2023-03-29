@@ -30,33 +30,33 @@ class DDPGAgent:
 
     def __init__(
             self,
-            env,
-            memory_size: int,
-            batch_size: int,
-            ou_noise_theta: float,
-            ou_noise_sigma: float,
-            gamma: float = 0.99,
-            tau: float = 5e-3,
-            initial_random_steps: int = 1e4,
+            args,
+            env
     ):
         """Initialize."""
-        obs_dim = env.observation_space.shape[0]
+        self.obs_dim = env.observation_space.shape[0]
         print(env.observation_space.shape)
-        action_dim = env.action_space.shape[0]
+        self.action_dim = env.action_space.shape[0]
         print(env.action_space.shape)
 
+        self.memory_size = args.memory_size
+        self.batch_size = args.batch_size
+        self.ou_noise_theta = args.ou_theta
+        self.ou_noise_sigma = args.ou_sigma
+        self.gamma = args.gamma
+        self.tau = args.tau
         self.env = env
-        self.memory = ReplayBuffer(obs_dim, action_dim, memory_size, batch_size)
-        self.batch_size = batch_size
-        self.gamma = gamma
-        self.tau = tau
-        self.initial_random_steps = initial_random_steps
+        self.memory = ReplayBuffer(self.obs_dim, self.action_dim, self.memory_size, self.batch_size)
+        self.batch_size = args.batch_size
+        self.gamma = args.gamma
+        self.tau = args.tau
+        self.initial_random_steps = args.initial_random_steps
 
         # noise
         self.noise = OUNoise(
-            action_dim,
-            theta=ou_noise_theta,
-            sigma=ou_noise_sigma,
+            self.action_dim,
+            theta=self.ou_noise_theta,
+            sigma=self.ou_noise_sigma,
         )
 
         # device: cpu / gpu
@@ -66,12 +66,12 @@ class DDPGAgent:
         print(self.device)
 
         # networks
-        self.actor = Actor(obs_dim, action_dim).to(self.device)
-        self.actor_target = Actor(obs_dim, action_dim).to(self.device)
+        self.actor = Actor(self.obs_dim, self.action_dim).to(self.device)
+        self.actor_target = Actor(self.obs_dim, self.action_dim).to(self.device)
         self.actor_target.load_state_dict(self.actor.state_dict())
 
-        self.critic = Critic(obs_dim + action_dim).to(self.device)
-        self.critic_target = Critic(obs_dim + action_dim).to(self.device)
+        self.critic = Critic(self.obs_dim + self.action_dim).to(self.device)
+        self.critic_target = Critic(self.obs_dim + self.action_dim).to(self.device)
         self.critic_target.load_state_dict(self.critic.state_dict())
 
         # optimizer

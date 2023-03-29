@@ -57,6 +57,19 @@ def get_arguments():
     """ ======================================================== """
     """ ===================== Agent config ===================== """
     """ ======================================================== """
-
+    parser.add_argument("--memory-size", type=float, default=1000,
+                        help="size of the replay memory")
+    parser.add_argument("--batch-size", type=float, default=1000,
+                        help="data batch size")
+    parser.add_argument("--ou-theta", type=float, default=1000,
+                        help="ou noise theta")
+    parser.add_argument("--ou-sigma", type=float, default=1000,
+                        help="ou noise sigma")
+    parser.add_argument("--initial-steps", type=float, default=1e4,
+                        help="initial random steps")
+    parser.add_argument("--gamma", type=float, default=0.99,
+                        help="discount factor")
+    parser.add_argument("--tau", type=float, default=5e-3,
+                        help="initial random steps")
 
     return parser.parse_args()
