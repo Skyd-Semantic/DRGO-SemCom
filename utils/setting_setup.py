@@ -38,13 +38,13 @@ def get_arguments():
     parser.add_argument("--lamda", type=float, default=1,
                         help="signal wave length")
     parser.add_argument("--power", type=float, default=1,
-                        help="signal wave length")
+                        help="max power of BS threshold")
     parser.add_argument("--poweru_max", type=float, default=2,
-                        help="signal wave length")
+                        help="max power of user threshold")
     parser.add_argument("--power0", type=float, default=1,
-                        help="signal wave length")
+                        help="power of BS")
     parser.add_argument("--powern", type=float, default=1,
-                        help="signal wave length")
+                        help="power of users")
     parser.add_argument("--bandwidth", type=float, default=1000,
                         help="signal bandwidth")
 
