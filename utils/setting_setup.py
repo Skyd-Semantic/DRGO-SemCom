@@ -45,6 +45,8 @@ def get_arguments():
                         help="signal wave length")
     parser.add_argument("--powern", type=float, default=1,
                         help="signal wave length")
+    parser.add_argument("--bandwidth", type=float, default=1000,
+                        help="signal bandwidth")
 
 
     return parser.parse_args()
