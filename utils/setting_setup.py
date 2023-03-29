@@ -4,7 +4,9 @@ from pathlib import Path
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    # run--config
+    """ ======================================================== """
+    """ ====================== Run config ===================== """
+    """ ======================================================== """
     parser.add_argument("--seed", type=int, default=730,
                         help="one manual random seed")
     parser.add_argument("--n-seed", type=int, default=1,
@@ -16,7 +18,9 @@ def get_arguments():
     parser.add_argument("--exp-dir", type=Path, default="D:/Github/1-RepresentationLearning/IVAE/experiments",
                         help="Path to the experiment folder, where all logs/checkpoints will be stored")
 
-    # --------------------- flag & name
+    """ ======================================================== """
+    """ ====================== Flag & name ===================== """
+    """ ======================================================== """
     parser.add_argument("--mode", type=str, default="train",
                         help="experiment mode")
     parser.add_argument("--log-delay", type=float, default=2.0,
@@ -28,7 +32,9 @@ def get_arguments():
     parser.add_argument("--f-cluster", type=bool, default=True,
                         help="Trigger the clustering to get salient feature of specific categories")
 
-    # --------------------- Environment config
+    """ ======================================================== """
+    """ ================== Environment config ================== """
+    """ ======================================================== """
     parser.add_argument("--noise", type=float, default=0.01,
                         help="network noise")
     parser.add_argument("--lamda", type=float, default=1,
