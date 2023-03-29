@@ -8,11 +8,11 @@ class DRGO_env():
         self.noise = args.noise
         self.lamda = args.lamda
         self.N_User = args.user_num
-        self.G_CU_list = np.ones((self.N_User, 1))
-        self.G_BS_t = 1
-        self.Z_u = 10000
-        self.Num_BS = 1
-        self.N_User = 10
+        self.G_CU_list = np.ones((self.N_User, 1))  # User directivity
+        self.G_BS_t = 1                             # BS directivity
+        self.Z_u = 10000                            # Data size
+        self.Num_BS = 1                             # Number of Base Stations
+        self.N_User = 10                            # Number of Users
 
         # Power setting
         self.P = args.power
@@ -41,6 +41,7 @@ class DRGO_env():
         self.H = self._channelGain_BS_CU()
 
         self.ChannelGain = self._ChannelGain_Calculated()
+
         # Channel Gain
         # self.H_CU = self._channelGain_BS_CU()
         self.Pathloss = self._Pathloss_Calculated()
