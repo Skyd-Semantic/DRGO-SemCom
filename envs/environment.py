@@ -188,7 +188,7 @@ class DRGO_env():
 
     def step(self, action):
         self.tau, self.o, self.P_n = self._decomposeAction(action)
-        # Enviroment change
+        # Environment change
         self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self.User_trajectory + self.U_location
         # state wrap
