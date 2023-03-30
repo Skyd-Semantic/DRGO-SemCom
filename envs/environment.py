@@ -20,7 +20,9 @@ class DRGO_env():
         self.P_0 = args.power0
         self.Pn = args.powern
         self.eta = 0.7  # de tinh R_u
-
+        self.P_BS_U = (self.P / self.N_User) * np.ones((self.N_User, 1))
+        self.sigma = -10**(-18)                        # W/Hz
+        self.T = self._Time()
         # Bandwidth
         self.B = args.bandwidth
 
@@ -41,6 +43,8 @@ class DRGO_env():
         self.H = self._channelGain_BS_CU()
 
         self.ChannelGain = self._ChannelGain_Calculated()
+
+        self.commonDataRate = self._calculateDataRate(self.H)
 
         # Channel Gain
         # self.H_CU = self._channelGain_BS_CU()
@@ -134,7 +138,23 @@ class DRGO_env():
         ChannelGain = numerator / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
-
+    def _calculateDataRate(self, channelGain_BS_CU):
+        sumCommonUserPower      = np.sum(self.P_BS_U)
+        interferenceCommonUser  = ((channelGain_BS_CU))*sumCommonUserPower
+        commonNumerator         = ((channelGain_BS_CU))*self.P_0
+        interferenceBandwidth   = self.B * self.sigma
+        commonDenominator       = interferenceCommonUser + interferenceBandwidth
+        commonDataRate          = self.B * np.log2(1+(commonNumerator/commonDenominator))
+        print(f"interferenceBandwidth: {interferenceBandwidth}")
+        print(f"interferenceCommonUser: {interferenceCommonUser}")
+        print(f"commonNumerator: {commonNumerator}")
+        print(f"commonDenominator: {commonDenominator}")
+        print(f"commonDataRate:{commonDataRate}")
+        return commonDataRate
+    def _Time(self):
+        self.commonDataRate = self._calculateDataRate(self.H)
+        self.T = np.multiply(self.o, self.tau)/self.commonDataRate
+        return T
     def _wrapState(self):
         self.H = self._channelGain_BS_CU()
         # print(np.shape(self.User_trajectory))
@@ -195,9 +215,11 @@ class DRGO_env():
         state_next = self._wrapState()
         # re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated()
-        T = 10
-        reward = T
+        self.commonDataRate = self._calculateDataRate(self.H)
+
+        self.T = self._Time()
         # print(reward)
+        reward = self.T
         done = False
         info = None
         return state_next, reward, done, info
