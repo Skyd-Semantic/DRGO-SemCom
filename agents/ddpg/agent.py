@@ -50,7 +50,7 @@ class DDPGAgent:
         self.batch_size = args.batch_size
         self.gamma = args.gamma
         self.tau = args.tau
-        self.initial_random_steps = args.initial_random_steps
+        self.initial_random_steps = args.initial_steps
 
         # noise
         self.noise = OUNoise(
@@ -161,7 +161,7 @@ class DDPGAgent:
 
     def train(self, args):
         num_ep = args.max_episode
-        num_frames = args.step
+        num_frames = args.max_step
         plotting_interval = args.plot_interval
 
         """Train the agent."""

@@ -39,8 +39,6 @@ def get_arguments():
     """ ======================================================== """
     parser.add_argument("--noise", type=float, default=0.01,
                         help="network noise")
-    parser.add_argument("--lamda", type=float, default=1,
-                        help="channel gain coefficient")
     parser.add_argument("--user-num", type=int, default=10,
                         help="number of users")
     parser.add_argument("--lamda", type=float, default=1,
