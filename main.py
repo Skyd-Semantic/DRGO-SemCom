@@ -17,5 +17,5 @@ if __name__ == '__main__':
         args,
         env
     )
-    agent.train(num_frames, num_ep)
+    agent.train(args)
 

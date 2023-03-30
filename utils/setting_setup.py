@@ -31,6 +31,8 @@ def get_arguments():
                         help="Logging Trigger")
     parser.add_argument("--f-cluster", type=bool, default=True,
                         help="Trigger the clustering to get salient feature of specific categories")
+    parser.add_argument("--plot-interval", type=int, default=50000,
+                        help="Number of step needed to plot new accuracy plot")
 
     """ ======================================================== """
     """ ================== Environment config ================== """
@@ -57,19 +59,23 @@ def get_arguments():
     """ ======================================================== """
     """ ===================== Agent config ===================== """
     """ ======================================================== """
-    parser.add_argument("--memory-size", type=float, default=1000,
+    parser.add_argument("--memory-size", type=int, default=100000,
                         help="size of the replay memory")
-    parser.add_argument("--batch-size", type=float, default=1000,
+    parser.add_argument("--batch-size", type=int, default=128,
                         help="data batch size")
-    parser.add_argument("--ou-theta", type=float, default=1000,
+    parser.add_argument("--ou-theta", type=float, default=1.0,
                         help="ou noise theta")
-    parser.add_argument("--ou-sigma", type=float, default=1000,
+    parser.add_argument("--ou-sigma", type=float, default=0.1,
                         help="ou noise sigma")
-    parser.add_argument("--initial-steps", type=float, default=1e4,
+    parser.add_argument("--initial-steps", type=int, default=1e4,
                         help="initial random steps")
     parser.add_argument("--gamma", type=float, default=0.99,
                         help="discount factor")
     parser.add_argument("--tau", type=float, default=5e-3,
                         help="initial random steps")
+    parser.add_argument("--max-episode", type=int, default=100,
+                        help="max episode")
+    parser.add_argument("--max-step", type=int, default=500,
+                        help="max number of step per episode")
 
     return parser.parse_args()

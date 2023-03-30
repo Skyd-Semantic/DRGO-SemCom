@@ -3,7 +3,7 @@ from agents.ddpg.modules.utils import *
 from agents.ddpg.modules.backbone import *
 from agents.ddpg.modules.core import *
 import matplotlib.pyplot as plt
-
+from typing import Dict, List, Tuple
 
 class DDPGAgent:
     """DDPGAgent interacting with environment.
@@ -159,7 +159,11 @@ class DDPGAgent:
 
         return actor_loss.data, critic_loss.data
 
-    def train(self, num_frames: int, num_ep: int, plotting_interval: int = 20000):
+    def train(self, args):
+        num_ep = args.max_episode
+        num_frames = args.step
+        plotting_interval = args.plot_interval
+
         """Train the agent."""
         for self.episode in range(1, num_ep + 1):
             self.is_test = False

@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Dict, List, Tuple
 
 
 class ReplayBuffer:
@@ -41,7 +42,7 @@ class ReplayBuffer:
         self.ptr = (self.ptr + 1) % self.max_size
         self.size = min(self.size + 1, self.max_size)
 
-    def sample_batch(self) -> Dict[str, np.ndarray]:
+    def sample_batch(self): # -> Dict[str, np.ndarray]:
         """Randomly sample a batch of experiences from memory."""
         idxs = np.random.choice(self.size, size=self.batch_size, replace=False)
         return dict(obs=self.obs_buf[idxs],
