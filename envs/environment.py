@@ -20,7 +20,8 @@ class DRGO_env():
         self.P_0 = args.power0
         self.Pn = args.powern
         self.eta = 0.7  # de tinh R_u
-
+        self.P_BS_U = (self.P / self.N_User) * np.ones((self.N_User, 1))
+        self.sigma = -10**(-18)                        # W/Hz
         # Bandwidth
         self.B = args.bandwidth
 
@@ -38,13 +39,14 @@ class DRGO_env():
         self.User_trajectory = self._trajectory_U_Generator()
         # self.User_trajectory = self._trajectory_U_Generator()
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
+        self.Pathloss = self._Pathloss_Calculated()
         self.H = self._channelGain_BS_CU()
-
         self.ChannelGain = self._ChannelGain_Calculated()
+        self.commonDataRate = self._calculateDataRate(self.H)
+        self.T = 0                                           # initialize rewards
 
         # Channel Gain
         # self.H_CU = self._channelGain_BS_CU()
-        self.Pathloss = self._Pathloss_Calculated()
 
         """ =============== """
         """     Actions     """
@@ -134,6 +136,20 @@ class DRGO_env():
         ChannelGain = numerator / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
+    def _calculateDataRate(self, channelGain_BS_CU):
+        sumCommonUserPower      = np.sum(self.P_BS_U)
+        interferenceCommonUser  = ((channelGain_BS_CU))*sumCommonUserPower
+        Numerator         = ((channelGain_BS_CU))*self.P_0
+
+        interferenceBandwidth   = self.B * self.sigma
+        Denominator       = interferenceCommonUser + interferenceBandwidth
+        DataRate          = self.B * np.log2(1+(Numerator/Denominator))
+
+        return DataRate
+    def _Time(self):
+        self.DataRate = self._calculateDataRate(self.H)
+        T = np.multiply(self.o, self.tau)/self.DataRate
+        return np.sum(T)
 
     def _wrapState(self):
         self.H = self._channelGain_BS_CU()
@@ -195,9 +211,10 @@ class DRGO_env():
         state_next = self._wrapState()
         # re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated()
-        T = 10
-        reward = T
+
+        self.T = self._Time()    # Generate self.T
         # print(reward)
+        reward = self.T
         done = False
         info = None
         return state_next, reward, done, info
@@ -206,7 +223,7 @@ class DRGO_env():
         # Base station initialization
         self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)
 
-        # Use initialiazation
+        # Use initialization
         # self.U_location = np.expand_dims(self._location_CU_Generator(), axis=0)
         # self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self._location_CU_Generator()
@@ -217,7 +234,7 @@ class DRGO_env():
         # re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated()
 
-        # Generate next state
+        # Generate next state [set of ChannelGain]
         state_next = self._wrapState()
         return state_next
 
