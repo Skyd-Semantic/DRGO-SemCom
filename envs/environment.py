@@ -51,9 +51,10 @@ class DRGO_env():
         """ =============== """
         """     Actions     """
         """ =============== """
-        self.o = np.reshape(np.random.randint(0, self.N_User, size=self.N_User), self.N_User)
+        self.o = np.random.randint(0, self.N_User, size=[self.N_User,1])
         # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_sub-1] (0 means Sub#1)
-        self.tau = np.reshape(np.random.randint(0, self.N_User, size=self.N_User), self.N_User)
+        self.tau = np.random.randint(0, self.N_User, size=[self.N_User,1])
+        print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
         # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1)
 
@@ -136,6 +137,7 @@ class DRGO_env():
         ChannelGain = numerator / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
+
     def _calculateDataRate(self, channelGain_BS_CU):
         sumCommonUserPower      = np.sum(self.P_BS_U)
         interferenceCommonUser  = ((channelGain_BS_CU))*sumCommonUserPower
@@ -144,11 +146,13 @@ class DRGO_env():
         interferenceBandwidth   = self.B * self.sigma
         Denominator       = interferenceCommonUser + interferenceBandwidth
         DataRate          = self.B * np.log2(1+(Numerator/Denominator))
-
         return DataRate
+
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.H)
-        T = np.multiply(self.o, self.tau)/self.DataRate
+
+        print(f"{np.shape(self.o)} - {np.shape(self.tau)} - {np.shape(self.DataRate)}")
+        T = (self.o * self.tau) / self.DataRate
         return np.sum(T)
 
     def _wrapState(self):
@@ -185,11 +189,15 @@ class DRGO_env():
         return action
 
     def _decomposeAction(self, action):
-
+        print(action)
         tau = action[0: self.N_User].astype(int)
         o = action[self.N_User: 2 * self.N_User].astype(int)
         P_n = action[2 * self.N_User: 3 * self.N_User].astype(float)
 
+        print(f"======================")
+        print(f"tau: {tau}")
+        print(f"o: {o}")
+        print(f"Pn: {P_n}")
         return [
             np.array(tau),
             np.array(o),
