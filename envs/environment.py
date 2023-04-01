@@ -22,6 +22,10 @@ class DRGO_env():
         self.eta = 0.7  # de tinh R_u
         self.P_BS_U = (self.P / self.N_User) * np.ones((self.N_User, 1))
         self.sigma = -10**(-18)                        # W/Hz
+<<<<<<< HEAD
+=======
+        self.T = self._Time()
+>>>>>>> f25795235e3fe8f389face313528ef4830898b6d
         # Bandwidth
         self.B = args.bandwidth
 
@@ -44,6 +48,8 @@ class DRGO_env():
         self.ChannelGain = self._ChannelGain_Calculated()
         self.commonDataRate = self._calculateDataRate(self.H)
         self.T = 0                                           # initialize rewards
+
+        self.commonDataRate = self._calculateDataRate(self.H)
 
         # Channel Gain
         # self.H_CU = self._channelGain_BS_CU()
@@ -137,6 +143,7 @@ class DRGO_env():
         ChannelGain = numerator / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
+<<<<<<< HEAD
 
     def _calculateDataRate(self, channelGain_BS_CU):
         sumCommonUserPower      = np.sum(self.P_BS_U)
@@ -155,6 +162,25 @@ class DRGO_env():
         T = (self.o * self.tau) / self.DataRate
         return np.sum(T)
 
+=======
+    def _calculateDataRate(self, channelGain_BS_CU):
+        sumCommonUserPower      = np.sum(self.P_BS_U)
+        interferenceCommonUser  = ((channelGain_BS_CU))*sumCommonUserPower
+        commonNumerator         = ((channelGain_BS_CU))*self.P_0
+        interferenceBandwidth   = self.B * self.sigma
+        commonDenominator       = interferenceCommonUser + interferenceBandwidth
+        commonDataRate          = self.B * np.log2(1+(commonNumerator/commonDenominator))
+        print(f"interferenceBandwidth: {interferenceBandwidth}")
+        print(f"interferenceCommonUser: {interferenceCommonUser}")
+        print(f"commonNumerator: {commonNumerator}")
+        print(f"commonDenominator: {commonDenominator}")
+        print(f"commonDataRate:{commonDataRate}")
+        return commonDataRate
+    def _Time(self):
+        self.commonDataRate = self._calculateDataRate(self.H)
+        self.T = np.multiply(self.o, self.tau)/self.commonDataRate
+        return T
+>>>>>>> f25795235e3fe8f389face313528ef4830898b6d
     def _wrapState(self):
         self.H = self._channelGain_BS_CU()
         # print(np.shape(self.User_trajectory))
@@ -219,8 +245,14 @@ class DRGO_env():
         state_next = self._wrapState()
         # re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated()
+<<<<<<< HEAD
 
         self.T = self._Time()    # Generate self.T
+=======
+        self.commonDataRate = self._calculateDataRate(self.H)
+
+        self.T = self._Time()
+>>>>>>> f25795235e3fe8f389face313528ef4830898b6d
         # print(reward)
         reward = self.T
         done = False
