@@ -58,7 +58,7 @@ class DRGO_env():
         # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1)
 
-        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), self.N_User)
+        self.P_n = np.random.randint(0, self.N_User, size=[self.N_User,1])
 
         """ ============================ """
         """     Environment Settings     """
@@ -181,18 +181,18 @@ class DRGO_env():
         ]
 
     def _wrapAction(self):
-        action = np.concatenate((np.array([[self.tau]]).reshape(1, self.N_User),
-                                 np.array([[self.o]]).reshape(1, self.N_User),
-                                 np.array([[self.P_n]]).reshape(1, self.N_User)), axis=1)
+        action = np.concatenate((np.array(self.tau),
+                                 np.array(self.o),
+                                 np.array(self.P_n)), axis=1)
 
         # print(f'wrap-action: {action}')
         return action
 
     def _decomposeAction(self, action):
         print(action)
-        tau = action[0: self.N_User].astype(int)
-        o = action[self.N_User: 2 * self.N_User].astype(int)
-        P_n = action[2 * self.N_User: 3 * self.N_User].astype(float)
+        tau = action[:,0]
+        o = action[:,1]
+        P_n = action[:,2]
 
         print(f"======================")
         print(f"tau: {tau}")
