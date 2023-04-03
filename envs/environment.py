@@ -189,10 +189,10 @@ class DRGO_env():
         return action
 
     def _decomposeAction(self, action):
-        print(action)
-        tau = action[0: self.N_User].astype(int)
-        o = action[self.N_User: 2 * self.N_User].astype(int)
-        P_n = action[2 * self.N_User: 3 * self.N_User].astype(float)
+        print(f"A: {action} | User: {self.N_User}")
+        tau = action[0][0: self.N_User].astype(int)
+        o = action[0][self.N_User: 2 * self.N_User].astype(int)
+        P_n = action[0][2 * self.N_User: 3 * self.N_User].astype(float)
 
         print(f"======================")
         print(f"tau: {tau}")
