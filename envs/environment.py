@@ -39,14 +39,9 @@ class DRGO_env():
         self.User_trajectory = self._trajectory_U_Generator()
         # self.User_trajectory = self._trajectory_U_Generator()
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
-        self.Pathloss = self._Pathloss_Calculated()
-        self.H = self._channelGain_BS_CU()
         self.ChannelGain = self._ChannelGain_Calculated()
         self.commonDataRate = self._calculateDataRate(self.H)
         self.T = 0                                           # initialize rewards
-
-        # Channel Gain
-        # self.H_CU = self._channelGain_BS_CU()
 
         """ =============== """
         """     Actions     """
@@ -68,7 +63,7 @@ class DRGO_env():
         self.action_space = self._wrapAction()
 
     def _channelGain_BS_CU(self):
-        """     Free-space path los     """
+        """     Free-space path loss    """
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)  # Directivity_BS * Directivity_CU * lambda
         denominator = ((4 * np.pi) ** 3) * (self.distance_CU_BS ** 4)
         channelGain = numerator / denominator
@@ -125,15 +120,9 @@ class DRGO_env():
 
     #       return dist
 
-    def _Pathloss_Calculated(self):
-        Pathloss = np.zeros((self.Num_BS, self.N_User))
-        Pathloss = 10 ** (-2 * np.log10(4 * np.pi * self.distance_CU_BS / self.lamda))
-        # print(Pathloss)
-        return Pathloss
-
     def _ChannelGain_Calculated(self):
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)
-        denominator = ((4 * np.pi) ** 3) * (self.distance_CU_BS ** 4)
+        denominator = (4 * np.pi * self.distance_CU_BS) ** 2
         ChannelGain = numerator / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
@@ -160,9 +149,8 @@ class DRGO_env():
         # print(np.shape(self.User_trajectory))
         state = np.concatenate((np.array(self.H).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
                                 np.array(self.User_trajectory).reshape(1, -1)), axis=1)
-        # print(np.shape(state))
-        # state = state.reshape(1,-1)
-        # print(np.shape(state))
+        print(f"State: {state}")
+
         return state
 
     def _decomposeState(self, state):
@@ -189,15 +177,15 @@ class DRGO_env():
         return action
 
     def _decomposeAction(self, action):
-        print(f"A: {action} | User: {self.N_User}")
+        # print(f"A: {action} | User: {self.N_User}")
         tau = action[0][0: self.N_User].astype(float)
         o = action[0][self.N_User: 2 * self.N_User].astype(float)
         P_n = action[0][2 * self.N_User: 3 * self.N_User].astype(float)
 
-        print(f"======================")
-        print(f"tau: {tau}")
-        print(f"o: {o}")
-        print(f"Pn: {P_n}")
+        # print(f"======================")
+        # print(f"tau: {tau}")
+        # print(f"o: {o}")
+        # print(f"Pn: {P_n}")
         return [
             np.array(tau),
             np.array(o),
