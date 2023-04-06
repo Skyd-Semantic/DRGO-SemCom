@@ -20,7 +20,6 @@ class DRGO_env():
         self.P_0 = args.power0
         self.Pn = args.powern
         self.eta = 0.7  # de tinh R_u
-        self.P_BS_U = (self.P / self.N_User) * np.ones((self.N_User, 1))
         self.sigma = -10**(-18)                        # W/Hz
         # Bandwidth
         self.B = args.bandwidth
@@ -39,18 +38,12 @@ class DRGO_env():
         self.User_trajectory = self._trajectory_U_Generator()
         # self.User_trajectory = self._trajectory_U_Generator()
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
-<<<<<<< Updated upstream
-=======
+
         self.Pathloss = self._Pathloss_Calculated()
->>>>>>> Stashed changes
         self.ChannelGain = self._ChannelGain_Calculated()
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
         self.T = 0                                           # initialize rewards
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
         """ =============== """
         """     Actions     """
         """ =============== """
@@ -70,7 +63,6 @@ class DRGO_env():
         self.observation_space = self._wrapState().squeeze()
         self.action_space = self._wrapAction()
 
-<<<<<<< Updated upstream
     def _channelGain_BS_CU(self):
         """     Free-space path loss    """
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)  # Directivity_BS * Directivity_CU * lambda
@@ -78,8 +70,6 @@ class DRGO_env():
         channelGain = numerator / denominator
         return channelGain
 
-=======
->>>>>>> Stashed changes
     def _location_BS_Generator(self):
         BS_location = [self.BS_x, self.BS_y]
         # print(BS_location)
@@ -139,13 +129,20 @@ class DRGO_env():
         return np.array(ChannelGain)
 
     def _calculateDataRate(self, channelGain_BS_CU):
-        Numerator         = ((channelGain_BS_CU))*self.P_0
+        """
+        The SNR is measured by:
+        :param self:
+        :param channelGain_BS_CU:
+        :return:
+        SNR = Numerator / Denominator
+        Numerator = H_k * P_k
+        Denominator = N_0 * B_k
+        Datarate = B_k np.log2(1+Numerator/Denominator)
+        """
+        Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
+        Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
-        sumCommonUserPower      = np.sum(self.P_BS_U)
-        interferenceCommonUser  = ((channelGain_BS_CU))*sumCommonUserPower
-        interferenceBandwidth   = self.B * self.sigma
-        Denominator       = interferenceCommonUser + interferenceBandwidth
-        DataRate          = self.B * np.log2(1+(Numerator/Denominator))
+        DataRate = self.B * np.log2(1+(Numerator/Denominator))
 
         print(f"Numerator: {Numerator}")
         print(f"Denominator: {Denominator}")
@@ -164,11 +161,7 @@ class DRGO_env():
         print(self.ChannelGain)
         state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
                                 np.array(self.User_trajectory).reshape(1, -1)), axis=1)
-<<<<<<< Updated upstream
         print(f"State: {state}")
-=======
->>>>>>> Stashed changes
-
         return state
 
     def _decomposeState(self, state):
