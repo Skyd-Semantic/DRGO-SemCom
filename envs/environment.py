@@ -30,6 +30,17 @@ class DRGO_env():
         self.BS_R_Range = 1
         self.BS_R_min = 0.1
 
+        """ =============== """
+        """     Actions     """
+        """ =============== """
+        self.o = np.random.randint(0, self.N_User, size=[self.N_User,1])
+        # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_sub-1] (0 means Sub#1)
+        self.tau = np.random.randint(0, self.N_User, size=[self.N_User,1])
+        print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
+        # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
+        # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1
+        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), self.N_User)
+
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
         """ ========================================= """
@@ -39,22 +50,9 @@ class DRGO_env():
         # self.User_trajectory = self._trajectory_U_Generator()
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
 
-        self.Pathloss = self._Pathloss_Calculated()
         self.ChannelGain = self._ChannelGain_Calculated()
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
-        self.T = 0                                           # initialize rewards
-
-        """ =============== """
-        """     Actions     """
-        """ =============== """
-        self.o = np.random.randint(0, self.N_User, size=[self.N_User,1])
-        # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_sub-1] (0 means Sub#1)
-        self.tau = np.random.randint(0, self.N_User, size=[self.N_User,1])
-        print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
-        # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
-        # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1)
-
-        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), self.N_User)
+        self.T = 0                                           # initialize rewards)
 
         """ ============================ """
         """     Environment Settings     """
