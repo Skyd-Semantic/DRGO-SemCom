@@ -20,7 +20,7 @@ class DRGO_env():
         self.P_0 = args.power0
         self.Pn = args.powern
         self.eta = 0.7  # de tinh R_u
-        self.sigma = -10**(-18)                        # W/Hz
+        self.sigma = 3.9811*(np.e**(-21+7))                        # W/Hz
         # Bandwidth
         self.B = args.bandwidth
 
@@ -39,7 +39,7 @@ class DRGO_env():
         print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
         # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1
-        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), self.N_User)
+        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User,1))
 
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
@@ -142,16 +142,22 @@ class DRGO_env():
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
         Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
-        DataRate = self.B * np.log2(1+(Numerator/Denominator))
+        DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
 
-        print(f"Numerator: {np.shape(Numerator)}")
-        print(f"Denominator: {np.shape(Denominator)}")
+        # print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
+        # print(f"======================")
+        # print(f"tau: {self.tau}")
+        # print(f"======================")
+        # print(f"Deno: {self.sigma}"))
+        # print(f"======================"
         print(f"Datarate: {DataRate}")
+        print(f"======================")
         return DataRate
 
     def _Time(self):
-        self.DataRate = self._calculateDataRate(self.ChannelGain)
+        self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
+        print(f"Time: {T}")
         return np.sum(T)
 
     def _wrapState(self):
@@ -176,19 +182,21 @@ class DRGO_env():
         return action
 
     def _decomposeAction(self, action):
-        # print(f"A: {action} | User: {self.N_User}")
+        # make output for resource allocation tau (range: [0,P_u_max])
+        # make output for power (range: [0,1])
+        # make output for compression ratio: (range: [0,1])
         tau = action[0][0: self.N_User].astype(float)
         o = action[0][self.N_User: 2 * self.N_User].astype(float)
-        P_n = action[0][2 * self.N_User: 3 * self.N_User].astype(float)
+        P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float))*self.P_u_max
 
-        # print(f"======================")
         # print(f"tau: {tau}")
         # print(f"o: {o}")
-        # print(f"Pn: {P_n}")
+        # print(f"P_n: {P_n}")
+
         return [
-            np.array(tau),
-            np.array(o),
-            np.array(P_n)
+            np.array(tau).reshape((1,self.N_User)),
+            np.array(o).reshape((1,self.N_User)),
+            np.array(P_n).reshape((1,self.N_User))
         ]
 
         # return [

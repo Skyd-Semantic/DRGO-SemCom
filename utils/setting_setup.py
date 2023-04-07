@@ -45,13 +45,13 @@ def get_arguments():
                         help="signal wave length")
     parser.add_argument("--power", type=float, default=1,
                         help="max power of BS threshold")
-    parser.add_argument("--poweru_max", type=float, default=2,
+    parser.add_argument("--poweru_max", type=float, default=10,
                         help="max power of user threshold")
     parser.add_argument("--power0", type=float, default=1,
                         help="power of BS")
     parser.add_argument("--powern", type=float, default=1,
                         help="power of users")
-    parser.add_argument("--bandwidth", type=float, default=1000,
+    parser.add_argument("--bandwidth", type=float, default=100,
                         help="signal bandwidth")
 
     """ ======================================================== """

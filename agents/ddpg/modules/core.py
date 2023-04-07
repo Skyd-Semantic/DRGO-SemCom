@@ -27,7 +27,8 @@ class Actor(nn.Module):
         x = F.relu(self.hidden2(x))
         x = F.tanh(self.hidden2(x))
         x = F.relu(self.hidden2(x))
-        action = self.out(x).tanh()
+        action = self.out(x).sigmoid()  # Everything should in range [0,1]
+
 
         return action
 
