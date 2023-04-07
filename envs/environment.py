@@ -137,29 +137,27 @@ class DRGO_env():
         Denominator = N_0 * B_k
         Datarate = B_k np.log2(1+Numerator/Denominator)
         """
+        print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
+        print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
         Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
         DataRate = self.B * np.log2(1+(Numerator/Denominator))
 
-        print(f"Numerator: {Numerator}")
-        print(f"Denominator: {Denominator}")
+        print(f"Numerator: {np.shape(Numerator)}")
+        print(f"Denominator: {np.shape(Denominator)}")
         print(f"Datarate: {DataRate}")
         return DataRate
 
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain)
-
-        # print(f"{np.shape(self.o)} - {np.shape(self.tau)} - {np.shape(self.DataRate)}")
         T = (self.o * self.tau) / self.DataRate
         return np.sum(T)
 
     def _wrapState(self):
         self.ChannelGain = self._ChannelGain_Calculated()
-        print(self.ChannelGain)
         state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
                                 np.array(self.User_trajectory).reshape(1, -1)), axis=1)
-        print(f"State: {state}")
         return state
 
     def _decomposeState(self, state):
@@ -168,13 +166,6 @@ class DRGO_env():
         User_trajectory = state[self.N_User + 2: 2 * self.N_User + 4]
         return [
             np.array(H), np.array(U_location), np.array(User_trajectory)
-            #   ]
-            # def _decomposeState(self, state):
-            #   H = state[:, :1]
-            #   U_location = state[:, 1:3]
-            #   User_trajectory = state[:, 3:]
-            #   return [
-            #       np.array(H), np.array(U_location), np.array(User_trajectory)
         ]
 
     def _wrapAction(self):
