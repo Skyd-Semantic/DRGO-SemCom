@@ -20,7 +20,7 @@ class DRGO_env():
         self.P_0 = args.power0
         self.Pn = args.powern
         self.eta = 0.7  # de tinh R_u
-        self.sigma = 3.9811*(np.e**(-21+7))                        # W/Hz
+        self.sigma = 3.9811*(np.e**(-21+7))                        # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
 
@@ -220,6 +220,15 @@ class DRGO_env():
         self.T = self._Time()    # Generate self.T
         # print(reward)
         reward = self.T
+
+        # reward = T - alpha_1 * constraint_1 - ... - alpha_n * constraint_n
+        # T ~ 0.1s -> alpha * constraint < 0.01
+        """
+        T = 100 
+        - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
+        - Print and observe the distribution of the constraints -> decide the alpha
+        """
+
         done = False
         info = None
         return state_next, reward, done, info
