@@ -36,7 +36,7 @@ class DRGO_env():
         self.o = np.random.randint(0, self.N_User, size=[self.N_User,1])
         # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_sub-1] (0 means Sub#1)
         self.tau = np.random.randint(0, self.N_User, size=[self.N_User,1])
-        print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
+        # print(f"{np.shape(self.tau)}-{np.shape(self.tau)}")
         # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1
         self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User,1))
@@ -137,35 +137,35 @@ class DRGO_env():
         Denominator = N_0 * B_k
         Datarate = B_k np.log2(1+Numerator/Denominator)
         """
-        print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
-        print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
+        # print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
+        # print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
         Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
         DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
 
-        print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
-        print(f"======================")
-        print(f"tau: {self.tau}")
-        print(f"======================")
-        print(f"Deno: {self.sigma}"))
-        print(f"======================"
-        print(f"Datarate: {DataRate}")
-        print(f"======================")
+        # print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
+        # print(f"======================")
+        # print(f"tau: {self.tau}")
+        # print(f"======================")
+        # print(f"Deno: {self.sigma}")
+        # print(f"======================")
+        # print(f"Datarate: {DataRate}")
+        # print(f"======================")
         return DataRate
 
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
-        print(f"Time: {T}")
+        # print(f"Time: {T}")
         return np.sum(T)
 
     def _wrapState(self):
         self.ChannelGain = self._ChannelGain_Calculated()
         # state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
         #                         np.array(self.User_trajectory).reshape(1, -1)), axis=1)
-        state = np.array(self.ChannelGain)
-        print(state)
+        state = np.array(self.ChannelGain).reshape(1,-1)
+        # print(np.shape(state))
         return state
 
     def _decomposeState(self, state):
@@ -175,7 +175,9 @@ class DRGO_env():
         # return [
         #     np.array(H), np.array(U_location), np.array(User_trajectory)
         # ]
-        H = 
+        H = state[0: self.N_User]
+        print(H)
+        return [np.array(H)]
 
     def _wrapAction(self):
         action = np.concatenate((np.array([[self.tau]]).reshape(1, self.N_User),
@@ -190,7 +192,7 @@ class DRGO_env():
         # make output for compression ratio: (range: [0,1])
         tau = action[0][0: self.N_User].astype(float)
         tau = scipy.special.softmax(tau, axis=None)
-        print(f"tau: {tau}")
+        # print(f"tau: {tau}")
         o = action[0][self.N_User: 2 * self.N_User].astype(float)
         P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float))*self.P_u_max
 
