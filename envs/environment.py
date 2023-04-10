@@ -23,7 +23,7 @@ class DRGO_env():
         self.sigma = 3.9811*(np.e**(-21+7))                        # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
-
+        self.B_u = args.bandwidth_u
         # Base station initialization
         self.BS_x = 0
         self.BS_y = 0
@@ -40,7 +40,7 @@ class DRGO_env():
         # self.beta = np.reshape(np.random.randint(0, self.N_User, size = self.N_User), self.N_User)
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number, value change from [0:Num_APs-1] (0 means Sub#1
         self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User,1))
-
+        self.B_u = np.reshape((np.random.rand(1, self.N_User)*self.B), (1, self.N_User))
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
         """ ========================================= """
@@ -54,6 +54,10 @@ class DRGO_env():
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
         self.T = 0                                           # initialize rewards)
         self.ou = 0
+        self.contraint1 = 0                                 #intialize contraint1
+        self.contraint2 = 0                                 # intialize contraint2
+        self.contraint3 = 0                                 # intialize contraint3
+        self.contraint4 = 0                                 #intialize contraint4
         """ ============================ """
         """     Environment Settings     """
         """ ============================ """
@@ -140,8 +144,11 @@ class DRGO_env():
         # print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
         # print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
-        Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
-
+        Denominator = self.B_u * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
+        # print(f"denominator: {Denominator}")
+        # print(f"B: {self.B}")
+        # print(f"B_u: {np.shape(self.B_u)}")
+        # print(f"P_n: {np.shape(self.P_n)}")
         DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
 
         # print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
@@ -153,17 +160,33 @@ class DRGO_env():
         # print(f"Datarate: {DataRate}")
         # print(f"======================")
         return DataRate
-
+    def _Constraint(self):
+        # print(f"tau: {self.tau} - tau shape: {np.shape(self.tau)}")
+        # print(f"B_u: {self.B_u} - B_u shape: {np.shape(self.B_u)}")
+        check = np.zeros((1,self.N_User))
+        # print(f"check: {np.shape(check)}")
+        for i in range(self.N_User):
+            if (self.B_u < 0).any():
+                self.contraint1 = 0.03 * self.B_u
+            check = np.sum(self.B_u * self.tau) - self.B
+            if (check > 0):
+                self.contraint2 = check*0.005
+                print(f"contrainst2: {self.contraint2}")
+            # print(f"check {check}")
+            if (self.P_n < 0).any() or ((self.P_n -self.P_u_max)>0).any():
+                self.contraint3 = 0.05 * self.P_n
+                print(f"contrainst3: {self.contraint3}")
+            if (self.o < 0).any() or (self.o > 1).any() :
+                self.contraint4 = 0.05 * self.o
+                print(f"contrainst4: {self.contraint4}")
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
-        print(f"Time: {T}")
+        # print(f"Time: {T}")
         # print(f"Tau: {self.tau}")
         return np.sum(T)
         # return T
-    def _sumo(self):
-        ou = self.o
-        return np.sum(ou)
+
     def _wrapState(self):
         self.ChannelGain = self._ChannelGain_Calculated()
         # state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
@@ -181,7 +204,7 @@ class DRGO_env():
         #     np.array(H), np.array(U_location), np.array(User_trajectory)
         # ]
         H = state[0: self.N_User]
-        print(H)
+        # print(H)
         return [np.array(H)]
 
     def _wrapAction(self):
@@ -228,10 +251,12 @@ class DRGO_env():
         self.ChannelGain = self._ChannelGain_Calculated()
 
         self.T = self._Time()    # Generate self.T
-        self.ou = self._sumo()
-        print(f"i {self.ou}")
+        A = self._Constraint()
+        # print(f"{A}")
+        # self.ou = self._sumo()
+        # print(f"i {self.ou}")
         # print(reward)
-        reward = self.T
+        reward = self.T - self.contraint1 * 0.01 - self.contraint2 * 0.01 - self.contraint3 * 0.01 - self.contraint4 * 0.01
 
         # reward = T - alpha_1 * constraint_1 - ... - alpha_n * constraint_n
         # T ~ 0.1s -> alpha * constraint < 0.01

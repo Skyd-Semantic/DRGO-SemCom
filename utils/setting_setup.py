@@ -53,7 +53,8 @@ def get_arguments():
                         help="power of users")
     parser.add_argument("--bandwidth", type=float, default=100,
                         help="signal bandwidth")
-
+    parser.add_argument("--bandwidth_u", type=float, default=10,
+                        help="signal bandwidth")
     """ ======================================================== """
     """ ===================== Agent config ===================== """
     """ ======================================================== """
@@ -71,9 +72,9 @@ def get_arguments():
                         help="discount factor")
     parser.add_argument("--tau", type=float, default=5e-3,
                         help="initial random steps")
-    parser.add_argument("--max-episode", type=int, default=100,
+    parser.add_argument("--max-episode", type=int, default=10,
                         help="max episode")
-    parser.add_argument("--max-step", type=int, default=500,
+    parser.add_argument("--max-step", type=int, default=50,
                         help="max number of step per episode")
 
     return parser.parse_args()
