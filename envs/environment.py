@@ -53,7 +53,7 @@ class DRGO_env():
         self.ChannelGain = self._ChannelGain_Calculated()
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
         self.T = 0                                           # initialize rewards)
-
+        self.ou = 0
         """ ============================ """
         """     Environment Settings     """
         """ ============================ """
@@ -157,14 +157,19 @@ class DRGO_env():
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
-        # print(f"Time: {T}")
+        print(f"Time: {T}")
+        # print(f"Tau: {self.tau}")
         return np.sum(T)
-
+        # return T
+    def _sumo(self):
+        ou = self.o
+        return np.sum(ou)
     def _wrapState(self):
         self.ChannelGain = self._ChannelGain_Calculated()
         # state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
         #                         np.array(self.User_trajectory).reshape(1, -1)), axis=1)
         state = np.array(self.ChannelGain).reshape(1,-1)
+        
         # print(np.shape(state))
         return state
 
@@ -223,6 +228,8 @@ class DRGO_env():
         self.ChannelGain = self._ChannelGain_Calculated()
 
         self.T = self._Time()    # Generate self.T
+        self.ou = self._sumo()
+        print(f"i {self.ou}")
         # print(reward)
         reward = self.T
 
