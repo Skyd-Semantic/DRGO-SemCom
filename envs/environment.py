@@ -196,16 +196,10 @@ class DRGO_env():
         # print(np.shape(state))
         return state
 
-    def _decomposeState(self, state):
-        # H = state[0: self.N_User]
-        # U_location = state[self.N_User: 2 * self.N_User + 2]
-        # User_trajectory = state[self.N_User + 2: 2 * self.N_User + 4]
-        # return [
-        #     np.array(H), np.array(U_location), np.array(User_trajectory)
-        # ]
-        H = state[0: self.N_User]
-        # print(H)
-        return [np.array(H)]
+    # def _decomposeState(self, state):
+    #     H = state[0: self.N_User]
+    #     # print(H)
+    #     return [np.array(H)]
 
     def _wrapAction(self):
         action = np.concatenate((np.array([[self.tau]]).reshape(1, self.N_User),
