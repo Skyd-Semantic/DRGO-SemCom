@@ -178,7 +178,7 @@ class DDPGAgent:
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action)
                 # state_next = state_next.squeeze()
-                print(f"reward of step {self.total_step} in episode{self.episode} is: {reward}")
+                # print(f"reward of step {self.total_step} in episode{self.episode} is: {reward}")
                 state = state_next
 
                 score = score + reward
