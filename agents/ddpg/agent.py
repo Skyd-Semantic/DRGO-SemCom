@@ -100,22 +100,22 @@ class DDPGAgent:
             ).detach().cpu().numpy()
 
         # add noise for exploration during training
-        # if not self.is_test:
-        #     noise = self.noise.sample()
-        #     selected_action = np.clip(selected_action + noise, -1.0, 1.0)
+        if not self.is_test:
+            noise = self.noise.sample()
+            selected_action = np.clip(selected_action + noise, -1.0, 1.0)
 
-        # self.transition = [state, selected_action]
+        self.transition = [state, selected_action]
 
         return selected_action
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
         """Take an action and return the response of the env."""
         state_next, reward, done, info = self.env.step(action)
-
-        # if not self.is_test:
-        #     self.transition += [reward, state_next, done, info]
-        #     print(self.transition)
-        #     self.memory.store(*self.transition)
+        print(f"reward: {reward}")
+        if not self.is_test:
+            self.transition += [reward, state_next, done]
+            print(self.transition)
+            self.memory.store(*self.transition)
 
         return state_next, reward, done, info
 
@@ -129,7 +129,7 @@ class DDPGAgent:
         action = torch.FloatTensor(samples["acts"]).to(device)
         reward = torch.FloatTensor(samples["rews"].reshape(-1, 1)).to(device)
         done = torch.FloatTensor(samples["done"].reshape(-1, 1)).to(device)
-        info = torch.FloatTensor(samples["false"].reshape(-1, 1)).to(device)
+
         if 0 == True:
             print(f"state size: {np.shape(state)}")
 
@@ -163,7 +163,7 @@ class DDPGAgent:
         num_ep = args.max_episode
         num_frames = args.max_step
         plotting_interval = args.plot_interval
-
+        self.total_step = 0
         """Train the agent."""
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
@@ -174,7 +174,8 @@ class DDPGAgent:
             critic_losses = []
             scores = []
             score = 0
-            for self.total_step in range(1, num_frames + 1):
+            for step in range(1, num_frames + 1):
+                self.total_step += 1
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action)
                 # state_next = state_next.squeeze()
@@ -187,7 +188,7 @@ class DDPGAgent:
                     state = self.env.reset()
                     scores.append(score)
                     score = 0
-
+                print(f"train: {len(self.memory)} | {self.total_step}")
                 # if training is ready
                 if (
                         len(self.memory) >= self.batch_size
