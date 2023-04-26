@@ -39,7 +39,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.acc_threshold = 0.05
         self.Lipschitz = 0.005
         self.inf_capacity = 0.9
-        self.lamda = 0.1
+        self.lamda = 0.01
 
         self.sigma_data = 0.01
         self.semantic_mode = args.semantic_mode
@@ -103,6 +103,7 @@ class DRGO_env(env_utils, env_agent_utils):
             penalty = np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) ))
         # print(f"penalty: {penalty}")
         reward = - self.T - self.lamda*penalty
+        print(f"rew: {reward} | T: {self.T}| pena: {penalty}")
         """
         T = 100 
         - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
