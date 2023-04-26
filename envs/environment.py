@@ -86,7 +86,6 @@ class DRGO_env(env_utils, env_agent_utils):
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
 
         self.T = self._Time()    # Generate self.T
-
         # Calculate distortion rate
         sigma_data = self.sigma_data
 
@@ -98,11 +97,11 @@ class DRGO_env(env_utils, env_agent_utils):
 
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = (self.eta**2 * self.Lipschitz/2 - self.eta)*\
-                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold
+            penalty = np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
+                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold)
         else:
-            penalty = (1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )
-
+            penalty = np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) ))
+        # print(f"penalty: {penalty}")
         reward = self.T - self.lamda*penalty
         """
         T = 100 
