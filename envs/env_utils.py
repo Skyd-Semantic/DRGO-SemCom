@@ -96,5 +96,5 @@ class env_utils():
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
-        print(f"Time: {T}")
+        print(f"Time: {T} - {np.sum(T)}")
         return np.sum(T)
