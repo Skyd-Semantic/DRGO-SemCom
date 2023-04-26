@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from utils.setting_setup import *
 import scipy
@@ -36,7 +38,7 @@ class DRGO_env(env_utils, env_agent_utils):
         # Goal-oriented Settings
         self.acc_threshold = 0.05
         self.Lipschitz = 0.005
-
+        self.inf_capacity = 0.9
         self.lamda = 0.1
 
         self.sigma_data = 0.01
@@ -99,8 +101,8 @@ class DRGO_env(env_utils, env_agent_utils):
             penalty = (self.eta**2 * self.Lipschitz/2 - self.eta)*\
                       (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold
         else:
-            penalty = (self.eta ** 2 * self.Lipschitz / 2 - self.eta)*\
-                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold
+            penalty = (1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )
+
         reward = self.T - self.lamda*penalty
         """
         T = 100 
