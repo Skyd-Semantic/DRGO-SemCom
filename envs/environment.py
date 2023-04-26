@@ -102,7 +102,7 @@ class DRGO_env(env_utils, env_agent_utils):
         else:
             penalty = np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) ))
         # print(f"penalty: {penalty}")
-        reward = self.T - self.lamda*penalty
+        reward = - self.T - self.lamda*penalty
         """
         T = 100 
         - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
