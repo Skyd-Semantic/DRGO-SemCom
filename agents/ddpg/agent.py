@@ -111,10 +111,10 @@ class DDPGAgent:
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
         """Take an action and return the response of the env."""
         state_next, reward, done, info = self.env.step(action)
-        print(f"reward: {reward}")
+        # print(f"reward: {reward}")
         if not self.is_test:
             self.transition += [reward, state_next, done]
-            print(self.transition)
+            # print(self.transition)
             self.memory.store(*self.transition)
 
         return state_next, reward, done, info
