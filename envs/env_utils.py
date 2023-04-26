@@ -57,10 +57,11 @@ class env_utils():
 
     #       return dist
 
-    def _ChannelGain_Calculated(self):
+    def _ChannelGain_Calculated(self, sigma_data):
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)
         denominator = (4 * np.pi * self.distance_CU_BS) ** 2
-        ChannelGain = numerator / denominator
+        awgn_coeff = np.random.normal(1, sigma_data)
+        ChannelGain = (numerator*awgn_coeff) / denominator
         # print(ChannelGain)
         return np.array(ChannelGain)
 
@@ -75,8 +76,8 @@ class env_utils():
         Denominator = N_0 * B_k
         Datarate = B_k np.log2(1+Numerator/Denominator)
         """
-        print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
-        print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
+        # print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
+        # print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
         Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
