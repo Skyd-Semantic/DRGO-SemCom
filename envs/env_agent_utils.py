@@ -8,7 +8,7 @@ class env_agent_utils():
         pass
 
     def _wrapState(self):
-        self.ChannelGain = self._ChannelGain_Calculated()
+        self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
         state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
                                 np.array(self.User_trajectory).reshape(1, -1)), axis=1)
         return state
@@ -25,7 +25,6 @@ class env_agent_utils():
         action = np.concatenate((np.array([[self.tau]]).reshape(1, self.N_User),
                                  np.array([[self.o]]).reshape(1, self.N_User),
                                  np.array([[self.P_n]]).reshape(1, self.N_User)), axis=1)
-
         return action
 
     def _decomposeAction(self, action):
@@ -34,7 +33,7 @@ class env_agent_utils():
         # make output for compression ratio: (range: [0,1])
         tau = action[0][0: self.N_User].astype(float)
         tau = scipy.special.softmax(tau, axis=None)
-        print(f"tau: {tau}")
+
         o = action[0][self.N_User: 2 * self.N_User].astype(float)
         P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float))*self.P_u_max
 
