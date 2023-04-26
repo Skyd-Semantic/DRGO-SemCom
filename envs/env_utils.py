@@ -89,12 +89,12 @@ class env_utils():
         # print(f"======================")
         # print(f"Deno: {self.sigma}"))
         # print(f"======================"
-        print(f"Datarate: {DataRate}")
-        print(f"======================")
+        # print(f"Datarate: {DataRate}")
+        # print(f"======================")
         return DataRate
 
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (self.o * self.tau) / self.DataRate
-        print(f"Time: {T} - {np.sum(T)}")
+        # print(f"Time: {T} - {np.sum(T)}")
         return np.sum(T)
