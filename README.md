@@ -18,6 +18,6 @@ git clone https://github.com/Skyd-Semantic/DRGO-SemCom.git
 
 # Training
 ```commandline
-python main.py 
+python main.py --initial-steps 100
 ```
 
