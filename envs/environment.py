@@ -39,7 +39,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.acc_threshold = 0.05
         self.Lipschitz = 0.005
         self.inf_capacity = 0.9
-        self.lamda = 0.01
+        self.lamda = args.pen_coeff
 
         self.sigma_data = 0.01
         self.semantic_mode = args.semantic_mode
