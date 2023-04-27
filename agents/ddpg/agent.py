@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 from utils.result_utils import *
 
+
 class DDPGAgent:
     """DDPGAgent interacting with environment.
 
@@ -165,7 +166,7 @@ class DDPGAgent:
         num_frames = args.max_step
         plotting_interval = args.plot_interval
         self.total_step = 0
-        algo_name = num_ep + "-" + num_frames + "-" + args.user_num + "-" + args.pen_coeff
+        algo_name = str(num_ep) + "-" + str(num_frames) + "-" + str(args.user_num) + "-" + str(args.pen_coeff)
         """Train the agent."""
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
@@ -285,4 +286,5 @@ class DDPGAgent:
         plt.figure(figsize=(30, 5))
         for loc, title, values in subplot_params:
             subplot(loc, title, values)
+        plt.savefig(fname="result.pdf")
         plt.show()
