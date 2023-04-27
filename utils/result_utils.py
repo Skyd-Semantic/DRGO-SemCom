@@ -7,15 +7,15 @@ def save_results(args,
                  scores: List[float],
                  actor_losses: List[float],
                  critic_losses: List[float],
-                 reward_list: List[float]
+                 reward_list: List[float],
+                 algo
                  ):
-    algo = args.algorithm + "-" + args.max_episode + "-" + args.max_step + "-" + args.user_num + "-" args.pen_coeff
+
     result_path = "./results/"
     if not os.path.exists(result_path):
         os.makedirs(result_path)
 
     if len(scores):
-        algo = algo
         file_path = result_path + "{}.h5".format(algo)
         print("File path: " + file_path)
 
@@ -25,10 +25,12 @@ def save_results(args,
             hf.create_dataset('actor_losses', data=actor_losses)
             hf.create_dataset('critic_losses', data=critic_losses)
 
-def save_item(self, item, item_name):
+def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
         os.makedirs(self.save_folder_name)
-    torch.save(item, os.path.join(self.save_folder_name, item_name + ".pt"))
+    torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
+    torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
 
 def load_item(self, item_name):
-    return torch.load(os.path.join(self.save_folder_name, item_name + ".pt"))
+    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")),\
+           torch.load(os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
