@@ -23,13 +23,11 @@ class Actor(nn.Module):
     def forward(self, state: torch.Tensor) -> torch.Tensor:
         """Forward method implementation."""
         x = F.relu(self.hidden1(state))
-        x = F.relu(self.hidden2(x))
-        x = F.relu(self.hidden2(x))
+        x = F.tanh(self.hidden2(x))
         x = F.relu(self.hidden2(x))
         x = F.relu(self.hidden2(x))
         x = F.tanh(self.hidden2(x))
         x = F.tanh(self.hidden2(x))
-        x = F.relu(self.hidden2(x))
         action = self.out(x).sigmoid()  # Everything should in range [0,1]
 
         return action
@@ -57,12 +55,11 @@ class Critic(nn.Module):
         """Forward method implementation."""
         x = torch.cat((state, action), dim=-1)
         x = F.relu(self.hidden1(x))
-        x = F.relu(self.hidden2(x))
-        x = F.relu(self.hidden2(x))
-        x = F.relu(self.hidden2(x))
-        x = F.relu(self.hidden2(x))
         x = F.tanh(self.hidden2(x))
         x = F.tanh(self.hidden2(x))
+        x = F.tanh(self.hidden2(x))
+        x = F.relu(self.hidden2(x))
+        x = F.relu(self.hidden2(x))
         x = F.relu(self.hidden2(x))
         value = self.out(x)
 
