@@ -165,6 +165,7 @@ class DDPGAgent:
         num_frames = args.max_step
         plotting_interval = args.plot_interval
         self.total_step = 0
+        algo_name = num_ep + "-" + num_frames + "-" + args.user_num + "-" + args.pen_coeff
         """Train the agent."""
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
@@ -215,9 +216,13 @@ class DDPGAgent:
                 scores,
                 actor_losses,
                 critic_losses,
-                reward_list
+                reward_list,
+                algo_name
             )
-
+        save_item(self,
+                  self.actor.load_state_dict(),
+                  self.critic.load_state_dict(),
+                  algo_name)
         self.env.close()
 
     def test(self):
