@@ -31,8 +31,10 @@ def get_arguments():
                         help="Logging Trigger")
     parser.add_argument("--f-cluster", type=bool, default=True,
                         help="Trigger the clustering to get salient feature of specific categories")
-    parser.add_argument("--plot-interval", type=int, default=50000,
+    parser.add_argument("--plot-interval", type=int, default=5000,
                         help="Number of step needed to plot new accuracy plot")
+    parser.add_argument("--save-flag", type=bool, default=True,
+                        help="Save Trigger")
 
     """ ======================================================== """
     """ ================== Environment config ================== """
@@ -77,5 +79,7 @@ def get_arguments():
                         help="max number of step per episode")
     parser.add_argument("--semantic-mode", type=str, default="learn",
                         help="learn | infer")
+    parser.add_argument("--pen-coeff", type=str, default=0.01,
+                        help="coefficient for penalty")
 
     return parser.parse_args()
