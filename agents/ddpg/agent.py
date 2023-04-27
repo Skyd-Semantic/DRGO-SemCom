@@ -104,7 +104,7 @@ class DDPGAgent:
         # add noise for exploration during training
         if not self.is_test:
             noise = self.noise.sample()
-            selected_action = np.clip(selected_action + noise, -1.0, 1.0)
+            selected_action = np.clip(selected_action + noise, 0, 1.0)
 
         self.transition = [state, selected_action]
 
@@ -112,7 +112,7 @@ class DDPGAgent:
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
         """Take an action and return the response of the env."""
-        state_next, reward, done, info = self.env.step(action)
+        state_next, reward, done, info = self.env.step(action, self.total_step)
         # print(f"reward: {reward}")
         if not self.is_test:
             self.transition += [reward, state_next, done]
@@ -132,15 +132,11 @@ class DDPGAgent:
         reward = torch.FloatTensor(samples["rews"].reshape(-1, 1)).to(device)
         done = torch.FloatTensor(samples["done"].reshape(-1, 1)).to(device)
 
-        if 0 == True:
-            print(f"state size: {np.shape(state)}")
-
         masks = 1 - done
         next_action = self.actor_target(state_next)
         # print(f"next action: {np.shape(next_action)}")
         next_value = self.critic_target(state_next, next_action)
         curr_return = reward + self.gamma * next_value * masks
-
         # train critic
         values = self.critic(state, action)
         critic_loss = F.mse_loss(values, curr_return)
@@ -151,13 +147,14 @@ class DDPGAgent:
 
         # train actor
         actor_loss = -self.critic(state, self.actor(state)).mean()
-
+        # print(f"return: {curr_return}|criticL: {critic_loss}|actorL{actor_loss}")
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
 
         # target update
         self._target_soft_update()
+        print(f"criticL:{critic_loss}|actorL:{actor_loss}")
 
         return actor_loss.data, critic_loss.data
 
@@ -183,24 +180,23 @@ class DDPGAgent:
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action)
                 # state_next = state_next.squeeze()
-                # print(f"reward of step {self.total_step} in episode{self.episode} is: {reward}")
                 state = state_next
 
                 score = score + reward
                 # if episode ends
                 if done:
+                    print(f"done: step: {step} of episode: {self.episode}")
                     state = self.env.reset()
                     scores.append(score)
                     score = 0
-                print(f"train: {len(self.memory)} | {self.total_step}")
                 # if training is ready
                 if (
                         len(self.memory) >= self.batch_size
                         and self.total_step > self.initial_random_steps
                 ):
                     actor_loss, critic_loss = self.update_model()
-                    actor_losses.append(actor_loss)
-                    critic_losses.append(critic_loss)
+                    actor_losses.append(actor_loss.cpu())
+                    critic_losses.append(critic_loss.cpu())
                     reward_list.append(reward)
 
                 # plotting
