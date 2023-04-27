@@ -4,6 +4,7 @@ from agents.ddpg.modules.backbone import *
 from agents.ddpg.modules.core import *
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
+from utils.result_utils import *
 
 class DDPGAgent:
     """DDPGAgent interacting with environment.
@@ -174,6 +175,7 @@ class DDPGAgent:
             critic_losses = []
             scores = []
             score = 0
+            reward_list = []
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
@@ -197,16 +199,25 @@ class DDPGAgent:
                     actor_loss, critic_loss = self.update_model()
                     actor_losses.append(actor_loss)
                     critic_losses.append(critic_loss)
+                    reward_list.append(reward)
 
                 # plotting
                 if self.total_step % plotting_interval == 0:
                     self._plot(
                         self.total_step,
-                        scores,
+                        reward_list,
                         actor_losses,
                         critic_losses,
                     )
                     pass
+        if args.save_flag:
+            save_results(
+                scores,
+                actor_losses,
+                critic_losses,
+                reward_list
+            )
+
         self.env.close()
 
     def test(self):
