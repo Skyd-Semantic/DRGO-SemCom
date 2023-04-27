@@ -1,6 +1,7 @@
 import os
 import h5py
 import torch
+from typing import List
 
 
 def save_results(args,
@@ -10,7 +11,6 @@ def save_results(args,
                  reward_list: List[float],
                  algo
                  ):
-
     result_path = "./results/"
     if not os.path.exists(result_path):
         os.makedirs(result_path)
@@ -25,12 +25,14 @@ def save_results(args,
             hf.create_dataset('actor_losses', data=actor_losses)
             hf.create_dataset('critic_losses', data=critic_losses)
 
+
 def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
         os.makedirs(self.save_folder_name)
     torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
     torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
 
+
 def load_item(self, item_name):
-    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")),\
+    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")), \
            torch.load(os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
