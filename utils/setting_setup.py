@@ -43,7 +43,7 @@ def get_arguments():
                         help="network noise")
     parser.add_argument("--user-num", type=int, default=10,
                         help="number of users")
-    parser.add_argument("--lamda", type=float, default=1,
+    parser.add_argument("--lamda", type=float, default=0.001,
                         help="signal wave length")
     parser.add_argument("--power", type=float, default=1,
                         help="max power of BS threshold")
@@ -79,7 +79,7 @@ def get_arguments():
                         help="max number of step per episode")
     parser.add_argument("--semantic-mode", type=str, default="learn",
                         help="learn | infer")
-    parser.add_argument("--pen-coeff", type=str, default=0.01,
+    parser.add_argument("--pen-coeff", type=float, default=1,
                         help="coefficient for penalty")
 
     return parser.parse_args()
