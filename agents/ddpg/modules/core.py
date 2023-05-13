@@ -55,9 +55,9 @@ class Critic(nn.Module):
         """Forward method implementation."""
         x = torch.cat((state, action), dim=-1)
         x = F.relu(self.hidden1(x))
-        x = F.tanh(self.hidden2(x))
-        x = F.tanh(self.hidden2(x))
-        x = F.tanh(self.hidden2(x))
+        x = F.relu(self.hidden2(x))
+        x = F.relu(self.hidden2(x))
+        x = F.relu(self.hidden2(x))
         x = F.relu(self.hidden2(x))
         x = F.relu(self.hidden2(x))
         x = F.relu(self.hidden2(x))
