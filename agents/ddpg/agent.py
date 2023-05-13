@@ -217,8 +217,8 @@ class DDPGAgent:
                 algo_name
             )
         save_item(self,
-                  self.actor.load_state_dict(),
-                  self.critic.load_state_dict(),
+                  self.actor.state_dict(),
+                  self.critic.state_dict(),
                   algo_name)
         self.env.close()
 
