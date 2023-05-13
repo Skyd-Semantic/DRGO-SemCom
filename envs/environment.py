@@ -98,10 +98,10 @@ class DRGO_env(env_utils, env_agent_utils):
 
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
-                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold)
+            penalty = max(np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
+                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold), 0)
         else:
-            penalty = np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) ))
+            penalty = max(np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )),0)
         # print(f"penalty: {penalty}")
         reward = - self.T - self.pen_coeff*penalty
         print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
