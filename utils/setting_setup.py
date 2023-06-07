@@ -81,5 +81,9 @@ def get_arguments():
                         help="learn | infer")
     parser.add_argument("--pen-coeff", type=float, default=0,
                         help="coefficient for penalty")
+    parser.add_argument("--lr-actor", type=float, default=3e-4,
+                        help="learning rate for actor")
+    parser.add_argument("--lr-critic", type=float, default=1e-3,
+                        help="learning rate for critic")
 
     return parser.parse_args()
