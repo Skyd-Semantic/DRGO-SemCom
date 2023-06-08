@@ -4,7 +4,7 @@ import torch
 from typing import List
 
 
-def save_results(args,
+def save_results(
                  scores: List[float],
                  actor_losses: List[float],
                  critic_losses: List[float],
