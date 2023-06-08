@@ -222,27 +222,8 @@ class DDPGAgent:
                   algo_name)
         self.env.close()
 
-    def test(self):
-        # """Test the agent."""
-        # self.is_test = True
+    def evaluate(self, args):
 
-        # state = self.env.reset()
-        # done = False
-        # score = 0
-
-        # frames = []
-        # while not done:
-        #     frames.append(self.env.render(mode="rgb_array"))
-        #     action = self.select_action(state)
-        #     next_state, reward, done = self.step(action)
-
-        #     state = next_state
-        #     score = self.discount*score + reward
-
-        # print("score: ", score)
-        # self.env.close()
-
-        # return frames
         pass
 
     def _target_soft_update(self):
