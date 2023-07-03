@@ -179,16 +179,8 @@ class DDPGAgent:
                 self.total_step += 1
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action)
-                # state_next = state_next.squeeze()
                 state = state_next
-
                 score = score + reward
-                # if episode ends
-                if done:
-                    print(f"done: step: {step} of episode: {self.episode}")
-                    state = self.env.reset()
-                    scores.append(score)
-                    score = 0
                 # if training is ready
                 if (
                         len(self.memory) >= self.batch_size
@@ -198,7 +190,6 @@ class DDPGAgent:
                     actor_losses.append(actor_loss.cpu())
                     critic_losses.append(critic_loss.cpu())
                     reward_list.append(reward)
-
                 # plotting
                 if self.total_step % plotting_interval == 0:
                     self._plot(
@@ -207,7 +198,11 @@ class DDPGAgent:
                         actor_losses,
                         critic_losses,
                     )
-                    pass
+                # if episode ends
+                if done:
+                    print(f"done: step: {step} of episode: {self.episode}")
+                    scores.append(score)
+                    break
         if args.save_flag:
             save_results(
                 scores,
@@ -220,11 +215,34 @@ class DDPGAgent:
                   self.actor.state_dict(),
                   self.critic.state_dict(),
                   algo_name)
+        result_dict()
         self.env.close()
 
     def evaluate(self, args):
+        """
+        Evaluate the trained algorithm:
+        - Load model for each settings
+        - Run models (without training)
+        """
+        num_ep = args.max_episode
+        num_frames = args.max_step
+        self.total_step = 0
+        """Train the agent."""
+        for self.episode in range(1, num_ep + 1):
+            self.is_test = False
+            state = self.env.reset()
+            reward_list = []
+            for step in range(1, num_frames + 1):
+                self.total_step += 1
+                action = self.select_action(state)
+                state_next, reward, done, info = self.step(action)
+                state = state_next
+                # if episode ends
+                if done:
+                    print(f"done: step: {step} of episode: {self.episode}")
+                    break
 
-        pass
+
 
     def _target_soft_update(self):
         """Soft-update: target = tau*local + (1-tau)*target."""
