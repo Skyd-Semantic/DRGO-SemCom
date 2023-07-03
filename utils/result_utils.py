@@ -25,6 +25,22 @@ def save_results(
             hf.create_dataset('actor_losses', data=actor_losses)
             hf.create_dataset('critic_losses', data=critic_losses)
 
+"""
+Feed STATE into environment + re-calculate again the attributes
+- Total transmission time vs.  
+    - Power
+    - Transforming factor (bits/word)
+    - Number of channels
+"""
+def result_dict():
+    """
+    The dicts should including:
+    -
+    Key:
+    -
+    :return:
+    """
+    pass
 
 def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
