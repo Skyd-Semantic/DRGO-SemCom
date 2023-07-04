@@ -1,6 +1,7 @@
 import os
 import h5py
 import torch
+import pickle
 from typing import List
 
 
@@ -32,24 +33,21 @@ Feed STATE into environment + re-calculate again the attributes
     - Transforming factor (bits/word)
     - Number of channels
 """
-def result_dict():
-    """
-    Settings:
-        -   Compression Ratio
-        -   Channel Level
-        -   Distortion Coefficient
-        -   Number of users
-    The dicts should including
-    Key:
-        -   Transmission Time
-        -   Power
-        -   Transforming factor
-        -   Number of channels
-    :return:
-    """
-    pass
 
 class ResultManager:
+    """
+    Settings:
+    -   Compression Ratio
+    -   Channel Level
+    -   Distortion Coefficient
+    -   Number of users
+    The dicts should including
+    Key:
+    -   Transmission Time
+    -   Power
+    -   Transforming factor
+    -   Number of channels
+    """
     def __init__(self):
         self.dictionary = {}
 
@@ -99,6 +97,16 @@ class ResultManager:
         else:
             print(f"Setting '{setting_name}' does not exist in the dictionary.")
         return None
+
+    def dict2pickle(self):
+        with open('person_data.pkl', 'wb') as fp:
+            pickle.dump(self.get_all_settings(), fp)
+            print('dictionary saved successfully to file')
+
+    def pickle2dict(self, datapath):
+        with open(datapath, 'rb') as fp:
+            result_dict = pickle.load(fp)
+        return result_dict
 
     def get_all_settings(self):
         return self.dictionary
