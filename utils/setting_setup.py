@@ -17,6 +17,8 @@ def get_arguments():
                         help="Path to the mnist dataset")
     parser.add_argument("--exp-dir", type=Path, default="D:/Github/1-RepresentationLearning/IVAE/experiments",
                         help="Path to the experiment folder, where all logs/checkpoints will be stored")
+    parser.add_argument("--result-path", type=Path, default="./results/exp_evals/",
+                        help="Path to the mnist dataset")
 
     """ ======================================================== """
     """ ====================== Flag & name ===================== """
@@ -49,10 +51,6 @@ def get_arguments():
                         help="max power of BS threshold")
     parser.add_argument("--poweru_max", type=float, default=10,
                         help="max power of user threshold")
-    parser.add_argument("--power0", type=float, default=1,
-                        help="power of BS")
-    parser.add_argument("--powern", type=float, default=1,
-                        help="power of users")
     parser.add_argument("--bandwidth", type=float, default=100,
                         help="signal bandwidth")
 
