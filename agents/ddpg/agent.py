@@ -217,12 +217,7 @@ class DDPGAgent:
                   self.actor.state_dict(),
                   self.critic.state_dict(),
                   algo_name)
-        self.result_manager.update_setting_value(
 
-        )
-        self.result_manager.update_setting_value(
-
-        )
         self.env.close()
 
     def evaluate(self, args):
@@ -290,3 +285,25 @@ class DDPGAgent:
             subplot(loc, title, values)
         plt.savefig(fname="result.pdf")
         plt.show()
+
+    def load_save(self, data_path):
+        # If no data_path available -> pass
+        if os.path.exists(data_path):
+            self.result_manager.pickle2dict(
+                data_path = data_path
+            )
+        else:
+            pass
+        for setting in settings:
+            self.result_manager.update_setting_value(
+                setting_name=0,
+                value=0,
+                transmission_time=0,
+                power=0,
+                transforming_factor=0,
+                num_channels=0
+            )
+
+        self.result_manager.dict2pickle(
+            data_path=data_path
+        )
