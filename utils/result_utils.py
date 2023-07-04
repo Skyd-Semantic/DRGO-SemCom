@@ -2,6 +2,10 @@ import os
 import h5py
 import torch
 import pickle
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 from typing import List
 
 
@@ -34,6 +38,7 @@ Feed STATE into environment + re-calculate again the attributes
     - Number of channels
 """
 
+
 class ResultManager:
     """
     Settings:
@@ -41,11 +46,14 @@ class ResultManager:
     -   Noise Level
     -   Distortion Coefficient
     -   Number of users
+    The dicts should including
+    Key:
     -   Transmission Time
     -   Power
     -   Transforming factor
     -   Number of channels
     """
+
     def __init__(self,
                  data_path):
         init_data = {
@@ -58,6 +66,8 @@ class ResultManager:
             'Transforming Factor': [],
             'Number of Channels': []
         }
+        self.colorset = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+                         '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
         self.result_df = pd.DataFrame(init_data)
         self.data_path = data_path
         if os.path.exists(self.data_path):
@@ -89,10 +99,34 @@ class ResultManager:
         self.result_df = pd.concat([load_df, new_df], ignore_index=True)
         self.df2pickle()
 
-    def query2draw(self, key_name, key_list, key_draw_1, key_draw_2):
-        for key_val in key_list:
-            filtered_df = self.result_df(self.result_df[key_name] == key_val)
-            # draw it
+    def query2draw(self, key_name, key_list, key_draw_x, key_draw_y):
+        result_df = self.pickle2df()
+        sns.set_style("whitegrid")  # Turn on the grid
+        sns.lineplot(
+            x=key_draw_x,
+            y=key_draw_y,
+            data=result_df,
+            hue=key_name,
+            linewidth=1.5,
+            linestyle='dashed',
+            palette=self.colorset
+        )
+        sns.scatterplot(x=key_draw_x,
+                        y=key_draw_y,
+                        hue=key_name,
+                        data=result_df,
+                        style=key_name,
+                        palette=self.colorset,
+                        legend=False)
+
+        values = result_df[key_name].unique()
+        legend_labels = [f'o={value}' for value in values]
+        print(legend_labels)
+        plt.legend(labels=legend_labels,
+                   loc='upper left',
+                   ncol=2,
+                   title=key_name)
+        plt.savefig('plot.pdf', dpi=300)  # Save as PDF
 
     def df2pickle(self):
         with open(self.data_path, 'wb') as file:
@@ -105,6 +139,8 @@ class ResultManager:
 
     def get_value(self):
         return self.result_df
+
+
 def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
         os.makedirs(self.save_folder_name)
