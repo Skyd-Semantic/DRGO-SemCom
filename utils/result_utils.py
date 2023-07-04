@@ -38,85 +38,78 @@ class ResultManager:
     """
     Settings:
     -   Compression Ratio
-    -   Channel Level
+    -   Noise Level
     -   Distortion Coefficient
     -   Number of users
-    The dicts should including
-    Key:
     -   Transmission Time
     -   Power
     -   Transforming factor
     -   Number of channels
     """
-    def __init__(self):
-        self.dictionary = {}
-
-    def add_setting(self, setting_name, values):
-        setting_dict = {}
-        for value in values:
-            key_dict = {
-                'Transmission Time': None,
-                'Power': None,
-                'Transforming Factor': None,
-                'Number of Channels': None
-            }
-            setting_dict[value] = key_dict
-        self.dictionary[setting_name] = setting_dict
-
-    def remove_setting(self, setting_name):
-        if setting_name in self.dictionary:
-            del self.dictionary[setting_name]
+    def __init__(self,
+                 data_path):
+        init_data = {
+            'Compression Ratio': [],
+            'Noise Level': [],
+            'Distortion': [],
+            'Number of Users': [],
+            'Transmission Time': [],
+            'Power': [],
+            'Transforming Factor': [],
+            'Number of Channels': []
+        }
+        self.result_df = pd.DataFrame(init_data)
+        self.data_path = data_path
+        if os.path.exists(self.data_path):
+            pass
         else:
-            print(f"Setting '{setting_name}' does not exist in the dictionary.")
+            self.df2pickle()
 
-    def update_setting_value(self, setting_name, value, transmission_time=None, power=None, transforming_factor=None, num_channels=None):
-        if setting_name in self.dictionary:
-            setting_dict = self.dictionary[setting_name]
-            if value in setting_dict:
-                key_dict = setting_dict[value]
-                if transmission_time is not None:
-                    key_dict['Transmission Time'] = transmission_time
-                if power is not None:
-                    key_dict['Power'] = power
-                if transforming_factor is not None:
-                    key_dict['Transforming Factor'] = transforming_factor
-                if num_channels is not None:
-                    key_dict['Number of Channels'] = num_channels
-            else:
-                print(f"Value '{value}' does not exist for setting '{setting_name}'.")
-        else:
-            print(f"Setting '{setting_name}' does not exist in the dictionary.")
+    def update_setting_value(self,
+                             compression=None,
+                             noise_lvl=None,
+                             distortion_coeff=None,
+                             user_num=None,
+                             transmission_time=None,
+                             power=None,
+                             transforming_factor=None,
+                             num_channels=None):
+        new_data = {
+            'Compression Ratio': [compression],
+            'Noise Level': [noise_lvl],
+            'Distortion': [distortion_coeff],
+            'Number of Users': [user_num],
+            'Transmission Time': [transmission_time],
+            'Power': [power],
+            'Transforming Factor': [transforming_factor],
+            'Number of Channels': [num_channels]
+        }
+        new_df = pd.DataFrame(new_data)
+        load_df = self.pickle2df()
+        self.result_df = pd.concat([load_df, new_df], ignore_index=True)
+        self.df2pickle()
 
-    def get_setting_value(self, setting_name, value):
-        if setting_name in self.dictionary:
-            setting_dict = self.dictionary[setting_name]
-            if value in setting_dict:
-                return setting_dict[value]
-            else:
-                print(f"Value '{value}' does not exist for setting '{setting_name}'.")
-        else:
-            print(f"Setting '{setting_name}' does not exist in the dictionary.")
-        return None
+    def query2draw(self, key_name, key_list, key_draw_1, key_draw_2):
+        for key_val in key_list:
+            filtered_df = self.result_df(self.result_df[key_name] == key_val)
+            # draw it
 
-    def dict2pickle(self):
-        with open('person_data.pkl', 'wb') as fp:
-            pickle.dump(self.get_all_settings(), fp)
-            print('dictionary saved successfully to file')
+    def df2pickle(self):
+        with open(self.data_path, 'wb') as file:
+            pickle.dump(self.result_df, file)
 
-    def pickle2dict(self, datapath):
-        with open(datapath, 'rb') as fp:
-            result_dict = pickle.load(fp)
-        return result_dict
+    def pickle2df(self):
+        with open(self.data_path, 'rb') as file:
+            target_df = pickle.load(file)
+        return target_df
 
-    def get_all_settings(self):
-        return self.dictionary
-
+    def get_value(self):
+        return self.result_df
 def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
         os.makedirs(self.save_folder_name)
     torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
     torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
-
 
 def load_item(self, item_name):
     return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")), \
