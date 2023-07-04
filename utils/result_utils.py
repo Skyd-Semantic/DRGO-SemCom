@@ -34,13 +34,33 @@ Feed STATE into environment + re-calculate again the attributes
 """
 def result_dict():
     """
-    The dicts should including:
-    -
+    Settings:
+        -   Compression Ratio
+        -   Channel Level
+        -   Distortion Coefficient
+        -   Number of users
+    The dicts should including
     Key:
-    -
+        -   Transmission Time
+        -   Power
+        -   Transforming factor
+        -   Number of channels
     :return:
     """
     pass
+
+class DictManager:
+    def __init__(self):
+        self.dictionary = {}
+
+    def add_setting(self, compression_value, transmission_time, power, transforming_factor, num_channels):
+        key_dict = {
+            'Transmission Time': transmission_time,
+            'Power': power,
+            'Transforming Factor': transforming_factor,
+            'Number of Channels': num_channels
+        }
+        self.dictionary['Compression'] = {compression_value: key_dict}
 
 def save_item(self, item_actor, item_critic, item_name):
     if not os.path.exists(self.save_folder_name):
