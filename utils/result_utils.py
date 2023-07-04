@@ -30,14 +30,15 @@ def save_results(
             hf.create_dataset('actor_losses', data=actor_losses)
             hf.create_dataset('critic_losses', data=critic_losses)
 
-"""
-Feed STATE into environment + re-calculate again the attributes
-- Total transmission time vs.  
-    - Power
-    - Transforming factor (bits/word)
-    - Number of channels
-"""
+def save_item(self, item_actor, item_critic, item_name):
+    if not os.path.exists(self.save_folder_name):
+        os.makedirs(self.save_folder_name)
+    torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
+    torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
 
+def load_item(self, item_name):
+    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")), \
+           torch.load(os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
 
 class ResultManager:
     """
@@ -139,14 +140,3 @@ class ResultManager:
 
     def get_value(self):
         return self.result_df
-
-
-def save_item(self, item_actor, item_critic, item_name):
-    if not os.path.exists(self.save_folder_name):
-        os.makedirs(self.save_folder_name)
-    torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
-    torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
-
-def load_item(self, item_name):
-    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")), \
-           torch.load(os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
