@@ -43,11 +43,9 @@ def load_item(self, item_name):
 class ResultManager:
     """
     Settings:
-    -   Compression Ratio
     -   Noise Level
     -   Distortion Coefficient
     -   Number of users
-    The dicts should including
     Key:
     -   Transmission Time
     -   Power
@@ -58,7 +56,6 @@ class ResultManager:
     def __init__(self,
                  data_path):
         init_data = {
-            'Compression Ratio': [],
             'Noise Level': [],
             'Distortion': [],
             'Number of Users': [],
@@ -77,7 +74,6 @@ class ResultManager:
             self.df2pickle()
 
     def update_setting_value(self,
-                             compression=None,
                              noise_lvl=None,
                              distortion_coeff=None,
                              user_num=None,
@@ -86,7 +82,6 @@ class ResultManager:
                              transforming_factor=None,
                              num_channels=None):
         new_data = {
-            'Compression Ratio': [compression],
             'Noise Level': [noise_lvl],
             'Distortion': [distortion_coeff],
             'Number of Users': [user_num],
