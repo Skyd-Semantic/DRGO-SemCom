@@ -5,7 +5,7 @@ from agents.ddpg.modules.core import *
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 from utils.result_utils import *
-
+from envs.commcal_utils import *
 
 class DDPGAgent:
     """DDPGAgent interacting with environment.
@@ -39,8 +39,10 @@ class DDPGAgent:
         self.obs_dim = env.observation_space.shape[0]
         # print(f"env shape: {env.observation_space.shape}")
         self.action_dim = env.action_space.shape[1]
-        # print(f"action shape: {env.action_space.shape}")
-
+        # Init Result Manager
+        self.result_manager = ResultManager(
+            data_path = args.result_path
+        )
         self.memory_size = args.memory_size
         self.batch_size = args.batch_size
         self.ou_noise_theta = args.ou_theta
@@ -218,6 +220,32 @@ class DDPGAgent:
                   self.critic.state_dict(),
                   algo_name)
 
+
+        """Evaluate the agent."""
+        # small episode, average transmission time over all episode/step
+        for self.episode in range(1, num_ep + 1):
+            state = self.env.reset()
+
+            for step in range(1, num_frames + 1):
+                self.total_step += 1
+                action = self.select_action(state)
+                state_next, reward, done, info = self.step(action)
+                state = state_next
+                score = score + reward
+
+                # if episode ends
+                if done:
+                    print(f"done: step: {step} of episode: {self.episode}")
+                    scores.append(score)
+                    break
+
+        self.result_manager.update_setting_value(
+            noise_lvl=mW2dBm(self.env.sigma),
+            distortion_coeff=args.,
+            user_num=args.user_num,
+            transmission_time=self.env.T,
+            power=args.poweru_max,
+        )
         self.env.close()
 
     def evaluate(self, args):
@@ -243,8 +271,6 @@ class DDPGAgent:
                 if done:
                     print(f"done: step: {step} of episode: {self.episode}")
                     break
-
-
 
     def _target_soft_update(self):
         """Soft-update: target = tau*local + (1-tau)*target."""
@@ -285,25 +311,3 @@ class DDPGAgent:
             subplot(loc, title, values)
         plt.savefig(fname="result.pdf")
         plt.show()
-
-    def load_save(self, data_path):
-        # If no data_path available -> pass
-        if os.path.exists(data_path):
-            self.result_manager.pickle2dict(
-                data_path = data_path
-            )
-        else:
-            pass
-        for setting in settings:
-            self.result_manager.update_setting_value(
-                setting_name=0,
-                value=0,
-                transmission_time=0,
-                power=0,
-                transforming_factor=0,
-                num_channels=0
-            )
-
-        self.result_manager.dict2pickle(
-            data_path=data_path
-        )
