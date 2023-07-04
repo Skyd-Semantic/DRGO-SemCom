@@ -89,6 +89,8 @@ class DDPGAgent:
         # mode: train / test
         self.is_test = False
 
+        self.result_manager = ResultManager()
+
     def select_action(self, state: np.ndarray) -> np.ndarray:
         """Select an action from the input state."""
         # if initial random action should be conducted
@@ -215,7 +217,12 @@ class DDPGAgent:
                   self.actor.state_dict(),
                   self.critic.state_dict(),
                   algo_name)
-        result_dict()
+        self.result_manager.update_setting_value(
+
+        )
+        self.result_manager.update_setting_value(
+
+        )
         self.env.close()
 
     def evaluate(self, args):
