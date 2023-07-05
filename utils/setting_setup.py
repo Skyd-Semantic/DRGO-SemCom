@@ -15,10 +15,10 @@ def get_arguments():
     # --------------------- Path
     parser.add_argument("--data-dir", type=Path, default="D:/Datasets/",
                         help="Path to the mnist dataset")
-    parser.add_argument("--exp-dir", type=Path, default="D:/Github/1-RepresentationLearning/IVAE/experiments",
+    parser.add_argument("--model-dir", type=Path, default="./results/models/",
                         help="Path to the experiment folder, where all logs/checkpoints will be stored")
-    parser.add_argument("--result-path", type=Path, default="./results/exp_evals/",
-                        help="Path to the mnist dataset")
+    parser.add_argument("--result-path", type=Path, default="./results/exp_evals/results.pkl",
+                        help="Path to the experimental evaluation results")
 
     """ ======================================================== """
     """ ====================== Flag & name ===================== """
@@ -31,8 +31,6 @@ def get_arguments():
                         help="Evaluation Trigger")
     parser.add_argument("--log-flag", type=bool, default=False,
                         help="Logging Trigger")
-    parser.add_argument("--f-cluster", type=bool, default=True,
-                        help="Trigger the clustering to get salient feature of specific categories")
     parser.add_argument("--plot-interval", type=int, default=5000,
                         help="Number of step needed to plot new accuracy plot")
     parser.add_argument("--save-flag", type=bool, default=True,
@@ -47,9 +45,7 @@ def get_arguments():
                         help="number of users")
     parser.add_argument("--lamda", type=float, default=0.001,
                         help="signal wave length")
-    parser.add_argument("--power", type=float, default=1,
-                        help="max power of BS threshold")
-    parser.add_argument("--poweru_max", type=float, default=10,
+    parser.add_argument("--poweru-max", type=float, default=10,
                         help="max power of user threshold")
     parser.add_argument("--bandwidth", type=float, default=100,
                         help="signal bandwidth")
@@ -65,10 +61,10 @@ def get_arguments():
                         help="ou noise theta")
     parser.add_argument("--ou-sigma", type=float, default=0.1,
                         help="ou noise sigma")
-    parser.add_argument("--initial-steps", type=int, default=1e4,
-                        help="initial random steps")
     parser.add_argument("--gamma", type=float, default=0.99,
                         help="discount factor")
+    parser.add_argument("--initial-steps", type=int, default=1e4,
+                        help="initial random steps")
     parser.add_argument("--tau", type=float, default=5e-3,
                         help="initial random steps")
     parser.add_argument("--max-episode", type=int, default=100,
