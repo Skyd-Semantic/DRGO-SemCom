@@ -226,8 +226,11 @@ class DDPGAgent:
 
 
         """Evaluate the agent."""
+        num_ep_eval = args.max_episode_eval
+        num_frames_eval = args.max_step_eval
+
         # small episode, average transmission time over all episode/step
-        for self.episode in range(1, num_ep + 1):
+        for self.episode in range(1, num_ep_eval + 1):
             state = self.env.reset()
             # init again
             score = 0
@@ -235,7 +238,7 @@ class DDPGAgent:
             sigma_tot_sqr = []
 
 
-            for step in range(1, num_frames + 1):
+            for step in range(1, num_frames_eval + 1):
                 self.total_step += 1
                 action = self.select_action(state)
                 state_next, results, done, info = self.step_eval(action, step)
@@ -244,8 +247,6 @@ class DDPGAgent:
                 score = score + results[0]
                 time.append(results[1])
                 sigma_tot_sqr.append(results[2])
-
-
                 # if episode ends
                 if done:
                     print(f"done: step: {step} of episode: {self.episode}")
