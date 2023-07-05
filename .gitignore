@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 # Results
-results\
+results/
+.results/
