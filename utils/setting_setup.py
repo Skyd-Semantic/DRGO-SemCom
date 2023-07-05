@@ -71,6 +71,10 @@ def get_arguments():
                         help="max episode")
     parser.add_argument("--max-step", type=int, default=500,
                         help="max number of step per episode")
+    parser.add_argument("--max-episode-eval", type=int, default=5,
+                        help="max evaluation episode")
+    parser.add_argument("--max-step-eval", type=int, default=200,
+                        help="max number of evaluation step per episode")
     parser.add_argument("--semantic-mode", type=str, default="learn",
                         help="learn | infer")
     parser.add_argument("--pen-coeff", type=float, default=0,
