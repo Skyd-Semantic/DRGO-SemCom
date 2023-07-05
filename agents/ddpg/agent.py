@@ -41,6 +41,10 @@ class DDPGAgent:
         self.action_dim = env.action_space.shape[1]
         # Init Result Manager
         self.algo_path=args.model_dir
+
+        os.makedirs(args.model_dir, exist_ok=True)
+        os.makedirs(args.result_path, exist_ok=True)
+
         self.result_manager = ResultManager(
             data_path = args.result_path
         )
