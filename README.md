@@ -6,7 +6,7 @@ Anyone who want to use this code, please cite the following references
 @article{DRGO-SemCom,
   Title = {Distortion Rate Resilience: A joint communication and computation framework for Goal-Oriented Semantic Communication},
   Author = {Minh-Duong~Nguyen, Quang-Vinh~Do, Zhaohui Yang, Won-Joo~Hwang},
-  journal={IEEE Trans. SomeThing Spec.},
+  journal={IEEE Transactions on SomeThing Special},
   year={2023}
 }
 ```
