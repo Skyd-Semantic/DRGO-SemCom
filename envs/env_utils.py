@@ -30,7 +30,6 @@ class env_utils():
             yUser_temp = self.BS_y + r * np.sin(theta)
             userList.append([xUser_temp, yUser_temp])
             U_location = np.array(userList)
-            # print(U_location)
         return U_location
 
     def _trajectory_U_Generator(self):
@@ -76,21 +75,11 @@ class env_utils():
         Denominator = N_0 * B_k
         Datarate = B_k np.log2(1+Numerator/Denominator)
         """
-        # print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
-        # print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
         Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
-        Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
+        Denominator = self.B * self.tau * self.naught       # self.B must be a list among all users [1, ... , U]
 
         DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
 
-        # print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
-        # print(f"======================")
-        # print(f"tau: {self.tau}")
-        # print(f"======================")
-        # print(f"Deno: {self.sigma}"))
-        # print(f"======================"
-        # print(f"Datarate: {DataRate}")
-        # print(f"======================")
         return DataRate
 
     def _Time(self):
