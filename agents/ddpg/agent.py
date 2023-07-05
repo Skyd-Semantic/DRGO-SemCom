@@ -40,9 +40,11 @@ class DDPGAgent:
         # print(f"env shape: {env.observation_space.shape}")
         self.action_dim = env.action_space.shape[1]
         # Init Result Manager
+        self.algo_path=args.model_dir
         self.result_manager = ResultManager(
             data_path = args.result_path
         )
+
         self.memory_size = args.memory_size
         self.batch_size = args.batch_size
         self.ou_noise_theta = args.ou_theta
@@ -91,8 +93,6 @@ class DDPGAgent:
         # mode: train / test
         self.is_test = False
 
-        self.result_manager = ResultManager()
-
     def select_action(self, state: np.ndarray) -> np.ndarray:
         """Select an action from the input state."""
         # if initial random action should be conducted
@@ -114,15 +114,19 @@ class DDPGAgent:
 
         return selected_action
 
-    def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
+    def step(self, action: np.ndarray, step) -> Tuple[np.ndarray, np.float64, bool]:
         """Take an action and return the response of the env."""
-        state_next, reward, done, info = self.env.step(action, self.total_step)
-        # print(f"reward: {reward}")
+        state_next, reward, done, info = self.env.step(action, step)
         if not self.is_test:
             self.transition += [reward, state_next, done]
             # print(self.transition)
             self.memory.store(*self.transition)
 
+        return state_next, reward, done, info
+
+    def step_eval(self, action: np.ndarray, step):
+        """Take an action and return the response of the env."""
+        state_next, reward, done, info = self.env.step_eval(action, step)
         return state_next, reward, done, info
 
     def update_model(self) -> torch.Tensor:
@@ -167,11 +171,11 @@ class DDPGAgent:
         num_frames = args.max_step
         plotting_interval = args.plot_interval
         self.total_step = 0
-        algo_name = str(num_ep) + "-" + str(num_frames) + "-" + str(args.user_num) + "-" + str(args.pen_coeff)
+        algo_name = str(num_ep) + "-" + str(num_frames) + \
+                    "-" + str(args.user_num) + "-" + str(args.pen_coeff)
         """Train the agent."""
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
-
             state = self.env.reset()
 
             actor_losses = []
@@ -182,7 +186,7 @@ class DDPGAgent:
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
-                state_next, reward, done, info = self.step(action)
+                state_next, reward, done, info = self.step(action, step)
                 state = state_next
                 score = score + reward
                 # if training is ready
@@ -215,23 +219,32 @@ class DDPGAgent:
                 reward_list,
                 algo_name
             )
-        save_item(self,
-                  self.actor.state_dict(),
-                  self.critic.state_dict(),
-                  algo_name)
+        save_item(item_actor=self.actor,
+                  item_critic=self.critic,
+                  item_name=algo_name,
+                  folder_name=self.algo_path)
 
 
         """Evaluate the agent."""
         # small episode, average transmission time over all episode/step
         for self.episode in range(1, num_ep + 1):
             state = self.env.reset()
+            # init again
+            score = 0
+            time  = []
+            sigma_tot_sqr = []
+
 
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
-                state_next, reward, done, info = self.step(action)
+                state_next, results, done, info = self.step_eval(action, step)
                 state = state_next
-                score = score + reward
+                # Results: [reward, trans_time, distort_tot, ]
+                score = score + results[0]
+                time.append(results[1])
+                sigma_tot_sqr.append(results[2])
+
 
                 # if episode ends
                 if done:
@@ -239,14 +252,16 @@ class DDPGAgent:
                     scores.append(score)
                     break
 
+            time_avg = np.average(np.array(time))
+            sigma_avg = np.average(np.array(sigma_tot_sqr))
+
         self.result_manager.update_setting_value(
-            noise_lvl=mW2dBm(self.env.sigma),
-            distortion_coeff=args.,
+            noise_lvl=mW2dBm(self.env.naught),
+            distortion_coeff=sigma_avg,
             user_num=args.user_num,
-            transmission_time=self.env.T,
-            power=args.poweru_max,
+            transmission_time=time_avg,
+            power=args.poweru_max
         )
-        self.env.close()
 
     def evaluate(self, args):
         """
@@ -254,6 +269,14 @@ class DDPGAgent:
         - Load model for each settings
         - Run models (without training)
         """
+        num_ep = args.max_episode
+        num_frames = args.max_step
+        algo_name = str(num_ep) + "-" + str(num_frames) +\
+                    "-" + str(args.user_num) + "-" + str(args.pen_coeff)
+        actor_item, critic_item = load_item(
+            item_name=algo_name,
+            folder_name=self.algo_path
+        )
         num_ep = args.max_episode
         num_frames = args.max_step
         self.total_step = 0
@@ -265,7 +288,7 @@ class DDPGAgent:
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
-                state_next, reward, done, info = self.step(action)
+                state_next, reward, done, info = self.step(action, step)
                 state = state_next
                 # if episode ends
                 if done:
