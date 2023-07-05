@@ -30,15 +30,15 @@ def save_results(
             hf.create_dataset('actor_losses', data=actor_losses)
             hf.create_dataset('critic_losses', data=critic_losses)
 
-def save_item(self, item_actor, item_critic, item_name):
-    if not os.path.exists(self.save_folder_name):
-        os.makedirs(self.save_folder_name)
-    torch.save(item_actor, os.path.join(self.save_folder_name, "actor-" + item_name + ".pt"))
-    torch.save(item_critic, os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
+def save_item(item_actor, item_critic, item_name, folder_name):
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    torch.save(item_actor, os.path.join(folder_name, "actor-" + item_name + ".pt"))
+    torch.save(item_critic, os.path.join(folder_name, "critic-" + item_name + ".pt"))
 
-def load_item(self, item_name):
-    return torch.load(os.path.join(self.save_folder_name, "actor-" + item_name + ".pt")), \
-           torch.load(os.path.join(self.save_folder_name, "critic-" + item_name + ".pt"))
+def load_item(item_name, folder_name):
+    return torch.load(os.path.join(folder_name, "actor-" + item_name + ".pt")), \
+           torch.load(os.path.join(folder_name, "critic-" + item_name + ".pt"))
 
 class ResultManager:
     """
@@ -52,7 +52,6 @@ class ResultManager:
     -   Transforming factor
     -   Number of channels
     """
-
     def __init__(self,
                  data_path):
         init_data = {
@@ -60,9 +59,7 @@ class ResultManager:
             'Distortion': [],
             'Number of Users': [],
             'Transmission Time': [],
-            'Power': [],
-            'Transforming Factor': [],
-            'Number of Channels': []
+            'Power': []
         }
         self.colorset = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
                          '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
@@ -74,21 +71,17 @@ class ResultManager:
             self.df2pickle()
 
     def update_setting_value(self,
-                             noise_lvl=None,
-                             distortion_coeff=None,
-                             user_num=None,
-                             transmission_time=None,
-                             power=None,
-                             transforming_factor=None,
-                             num_channels=None):
+                             noise_lvl,
+                             distortion_coeff,
+                             user_num,
+                             transmission_time,
+                             power):
         new_data = {
             'Noise Level': [noise_lvl],
             'Distortion': [distortion_coeff],
             'Number of Users': [user_num],
             'Transmission Time': [transmission_time],
             'Power': [power],
-            'Transforming Factor': [transforming_factor],
-            'Number of Channels': [num_channels]
         }
         new_df = pd.DataFrame(new_data)
         load_df = self.pickle2df()
