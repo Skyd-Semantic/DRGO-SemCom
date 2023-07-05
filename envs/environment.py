@@ -23,7 +23,7 @@ class DRGO_env(env_utils, env_agent_utils):
         # Power setting
         self.P_u_max = args.poweru_max
         self.eta = 0.7  # de tinh R_u
-        self.sigma = 3.9811*(np.e**(-21+7))                        # -174 dBm/Hz -> W/Hz
+        self.naught = 3.9811*(np.e**(-21+7))                        # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
 
@@ -115,6 +115,48 @@ class DRGO_env(env_utils, env_agent_utils):
         info = None
         return state_next, reward, done, info
 
+    def step_eval(self, action, step):
+        """
+
+        :return:
+        """
+        self.tau, self.o, self.P_n = self._decomposeAction(action)
+        # Environment change
+        self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
+        self.U_location = self.User_trajectory + self.U_location
+        # State wrap
+        state_next = self._wrapState()
+        # Re-calculate channel gain
+        self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
+
+        self.T = self._Time()    # Generate self.T
+        # Calculate distortion rate
+        sigma_data = self.sigma_data
+
+        # We assume that it follows CLT
+        # This function can be changed in the future
+        temp_c = 20
+        sigma_sem = np.exp(temp_c*(1-self.o)**2)
+        sigma_tot_sqr = 1/((1/sigma_sem**2)+(1/sigma_data**2))
+
+        # Goal-oriented penalty
+        if self.semantic_mode == "learn":
+            penalty = max(np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
+                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold), 0)
+        else:
+            penalty = max(np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )),0)
+        # print(f"penalty: {penalty}")
+        reward = - self.T - self.pen_coeff*penalty
+        print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
+
+        if step == self.max_step:
+            done = True
+        else:
+            done = False
+        info = None
+
+        return state_next, [reward, self.T, sigma_tot_sqr,], done, info
+
     def reset(self):
         # Base station initialization
         self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)
@@ -133,9 +175,6 @@ class DRGO_env(env_utils, env_agent_utils):
         # Generate next state [set of ChannelGain]
         state_next = self._wrapState()
         return state_next
-
-    def close(self):
-        pass
 
 
 if __name__ == '__main__':
