@@ -34,8 +34,10 @@ class DRGO_env(env_utils, env_agent_utils):
         self.BS_R_min = 0.1
 
         # Goal-oriented Settings
+        # Learn
         self.acc_threshold = 0.05
-        self.Lipschitz = 0.005
+        self.Lipschitz = args.L
+        # Inference
         self.inf_capacity = 0.9
         self.pen_coeff = args.pen_coeff
 
