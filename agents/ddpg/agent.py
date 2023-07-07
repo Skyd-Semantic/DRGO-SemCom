@@ -178,15 +178,18 @@ class DDPGAgent:
         algo_name = str(num_ep) + "-" + str(num_frames) + \
                     "-" + str(args.user_num) + "-" + str(args.pen_coeff)
         """Train the agent."""
+        actor_losses = []
+        critic_losses = []
+        scores = []
+        reward_list = []
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
             state = self.env.reset()
 
-            actor_losses = []
-            critic_losses = []
-            scores = []
-            score = 0
-            reward_list = []
+            # actor_losses = []
+            # critic_losses = []
+            # scores = []
+            # reward_list = []
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
