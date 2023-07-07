@@ -244,7 +244,6 @@ class DDPGAgent:
             time  = []
             sigma_tot_sqr = []
 
-
             for step in range(1, num_frames_eval + 1):
                 self.total_step += 1
                 action = self.select_action(state)
