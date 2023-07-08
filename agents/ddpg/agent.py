@@ -177,6 +177,7 @@ class DDPGAgent:
         algo_name = str(num_ep) + "-" + str(num_frames) + \
                     "-" + str(args.user_num) + "-" + str(args.pen_coeff)
         """Train the agent."""
+        list_results = []
         actor_losses = []
         critic_losses = []
         scores = []
@@ -214,8 +215,10 @@ class DDPGAgent:
                     )
                 # if episode ends
                 if done:
-                    print(f"done: step: {step} of episode: {self.episode}")
+                    print(f" ======= done: step: {step} of episode: {self.episode} ======= ")
                     scores.append(score)
+                    list_results.append([self.episode, score, actor_losses, critic_losses, reward_list])
+                    print(f"score: {score}")
                     break
         if args.save_flag:
             save_results(
@@ -229,7 +232,8 @@ class DDPGAgent:
                   item_critic=self.critic,
                   item_name=algo_name,
                   folder_name=self.algo_path)
-
+        df_results = pd.DataFrame(list_results, columns= ['episode', 'score', 'actor_losses', 'critic_losses', 'reward'])
+        df_results.to_csv('df_results.csv')
 
         """Evaluate the agent."""
         num_ep_eval = args.max_episode_eval
@@ -256,7 +260,7 @@ class DDPGAgent:
                 # if episode ends
                 if done:
                     print(f"done: step: {step} of episode: {self.episode}")
-                    scores.append(score/num_frales_eval)
+                    scores.append(score/num_frames_eval)
                     break
 
             time_avg = np.average(np.array(time))
