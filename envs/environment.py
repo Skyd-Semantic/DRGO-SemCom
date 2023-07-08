@@ -74,7 +74,6 @@ class DRGO_env(env_utils, env_agent_utils):
         self.observation_space = self._wrapState().squeeze()
         self.action_space = self._wrapAction()
 
-
     def step(self, action, step):
         self.tau, self.o, self.P_n = self._decomposeAction(action)
         # Environment change
