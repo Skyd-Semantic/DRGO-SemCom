@@ -146,7 +146,6 @@ class DDPGAgent:
 
         masks = 1 - done
         next_action = self.actor_target(state_next)
-        # print(f"next action: {np.shape(next_action)}")
         next_value = self.critic_target(state_next, next_action)
         curr_return = reward + self.gamma * next_value * masks
         # train critic
