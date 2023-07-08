@@ -185,7 +185,7 @@ class DDPGAgent:
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
             state = self.env.reset()
-
+            score = 0
             # actor_losses = []
             # critic_losses = []
             # scores = []
