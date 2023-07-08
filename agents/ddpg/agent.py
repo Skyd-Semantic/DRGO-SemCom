@@ -251,12 +251,13 @@ class DDPGAgent:
                 state = state_next
                 # Results: [reward, trans_time, distort_tot, ]
                 score = score + results[0]
+
                 time.append(results[1])
                 sigma_tot_sqr.append(results[2])
                 # if episode ends
                 if done:
                     print(f"done: step: {step} of episode: {self.episode}")
-                    scores.append(score)
+                    scores.append(score/num_frales_eval)
                     break
 
             time_avg = np.average(np.array(time))
