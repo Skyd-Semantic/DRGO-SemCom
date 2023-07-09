@@ -18,4 +18,4 @@ if __name__ == '__main__':
         env
     )
     agent.train(args)
-    agent.evaluate(args)
+    # agent.evaluate(args)
