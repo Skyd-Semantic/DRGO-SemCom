@@ -108,7 +108,7 @@ class DRGO_env(env_utils, env_agent_utils):
         - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
         - Print and observe the distribution of the constraints -> decide the alpha
         """
-        if step == self.max_step:
+        if step == (self.max_step):
             done = True
         else:
             done = False
