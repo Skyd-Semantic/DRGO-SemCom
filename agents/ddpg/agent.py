@@ -165,7 +165,6 @@ class DDPGAgent:
 
         # target update
         self._target_soft_update()
-        print(f"criticL:{critic_loss}|actorL:{actor_loss}")
 
         return actor_loss.data, critic_loss.data
 
@@ -215,10 +214,9 @@ class DDPGAgent:
                     )
                 # if episode ends
                 if done:
-                    print(f" ======= done: step: {step} of episode: {self.episode} ======= ")
                     scores.append(score)
-                    list_results.append([self.episode, score, actor_losses, critic_losses, reward_list])
-                    print(f"score: {score}")
+                    list_results.append([self.episode, score])
+                    print(f" ======= done: step: {step} of episode: {self.episode} | score: {score} ======= ")
                     break
         if args.save_flag:
             save_results(
@@ -232,47 +230,47 @@ class DDPGAgent:
                   item_critic=self.critic,
                   item_name=algo_name,
                   folder_name=self.algo_path)
-        df_results = pd.DataFrame(list_results, columns= ['episode', 'score', 'actor_losses', 'critic_losses', 'reward'])
+        df_results = pd.DataFrame(list_results, columns= ['episode', 'score'])
         df_results.to_csv('df_results.csv')
 
         """Evaluate the agent."""
-        num_ep_eval = args.max_episode_eval
-        num_frames_eval = args.max_step_eval
+        # num_ep_eval = args.max_episode_eval
+        # num_frames_eval = args.max_step_eval
 
-        # small episode, average transmission time over all episode/step
-        for self.episode in range(1, num_ep_eval + 1):
-            state = self.env.reset()
-            # init again
-            score = 0
-            time  = []
-            sigma_tot_sqr = []
+        # # small episode, average transmission time over all episode/step
+        # for self.episode in range(1, num_ep_eval + 1):
+        #     state = self.env.reset()
+        #     # init again
+        #     score = 0
+        #     time  = []
+        #     sigma_tot_sqr = []
 
-            for step in range(1, num_frames_eval + 1):
-                self.total_step += 1
-                action = self.select_action(state)
-                state_next, results, done, info = self.step_eval(action, step)
-                state = state_next
-                # Results: [reward, trans_time, distort_tot, ]
-                score = score + results[0]
+            # for step in range(1, num_frames_eval + 1):
+            #     self.total_step += 1
+            #     action = self.select_action(state)
+            #     state_next, results, done, info = self.step_eval(action, step)
+            #     state = state_next
+            #     # Results: [reward, trans_time, distort_tot, ]
+            #     score = score + results[0]
+            #
+            #     time.append(results[1])
+            #     sigma_tot_sqr.append(results[2])
+            #     # if episode ends
+            #     if done:
+            #         print(f"done: step: {step} of episode: {self.episode}")
+            #         scores.append(score/num_frames_eval)
+            #         break
+            #
+            # time_avg = np.average(np.array(time))
+            # sigma_avg = np.average(np.array(sigma_tot_sqr))
 
-                time.append(results[1])
-                sigma_tot_sqr.append(results[2])
-                # if episode ends
-                if done:
-                    print(f"done: step: {step} of episode: {self.episode}")
-                    scores.append(score/num_frames_eval)
-                    break
-
-            time_avg = np.average(np.array(time))
-            sigma_avg = np.average(np.array(sigma_tot_sqr))
-
-        self.result_manager.update_setting_value(
-            noise_lvl=mW2dBm(self.env.naught),
-            distortion_coeff=sigma_avg,
-            user_num=args.user_num,
-            transmission_time=time_avg,
-            power=args.poweru_max
-        )
+        # self.result_manager.update_setting_value(
+        #     noise_lvl=mW2dBm(self.env.naught),
+        #     distortion_coeff=sigma_avg,
+        #     user_num=args.user_num,
+        #     transmission_time=time_avg,
+        #     power=args.poweru_max
+        # )
 
     def evaluate(self, args):
         """
