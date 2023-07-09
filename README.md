@@ -18,6 +18,5 @@ git clone https://github.com/Skyd-Semantic/DRGO-SemCom.git
 
 # Training
 ```commandline
-python main.py --initial-steps 1 --max-episode 1 --max-step 1 --semantic-mode learn --pen-coeff 0.1 --noise 0.01 --lamda 0.001 --poweru-max 10 
-```
+ python main.py --initial-steps 50000 --max-episode 400 --max-step 200 --max-episode-eval 5 --max-step-eval 50 --semantic-mode learn --pen-coeff 0.0 --noise 0.01 --lamda 0.001 --poweru-max 10 --plot-interval 80000 --user-num 10```
 
