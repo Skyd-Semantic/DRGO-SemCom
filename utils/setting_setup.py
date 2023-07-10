@@ -60,7 +60,7 @@ def get_arguments():
     """ ===================== Agent config ===================== """
     """ ======================================================== """
     parser.add_argument("--drl-algo", choices=['ddpg-ei', 'ddpg'],
-                        default='ddpg-ei'
+                        default='ddpg-ei',
                         help="choice of DRL algorithm")
     parser.add_argument("--memory-size", type=int, default=100000,
                         help="size of the replay memory")
