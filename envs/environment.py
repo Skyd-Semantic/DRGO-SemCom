@@ -7,6 +7,7 @@ import scipy
 from envs.env_utils import *
 from envs.env_agent_utils import *
 
+
 class DRGO_env(env_utils, env_agent_utils):
     def __init__(self, args):
         # Network setting
@@ -18,11 +19,12 @@ class DRGO_env(env_utils, env_agent_utils):
         self.Z_u = 10000  # Data size
         self.Num_BS = 1  # Number of Base Stations
         self.max_step = args.max_step
+        self.drl_algo = args.drl_algo
 
         # Power setting
         self.P_u_max = args.poweru_max
         self.eta = 0.7  # de tinh R_u
-        self.naught = 3.9811*(np.e**(-21+7))                        # -174 dBm/Hz -> W/Hz
+        self.naught = 3.9811 * (np.e ** (-21 + 7))  # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
 
@@ -46,13 +48,13 @@ class DRGO_env(env_utils, env_agent_utils):
         """ =============== """
         """     Actions     """
         """ =============== """
-        self.o = np.random.randint(0, self.N_User, size=[self.N_User,1])
+        self.o = np.random.randint(0, self.N_User, size=[self.N_User, 1])
         # tau is Sub-carrier-Allocation. It is an array with form of Num_Nodes interger number,
         # value change from [0:Num_sub-1] (0 means Sub#1)
-        self.tau = np.random.randint(0, self.N_User, size=[self.N_User,1])
+        self.tau = np.random.randint(0, self.N_User, size=[self.N_User, 1])
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number,
         # value change from [0:Num_APs-1] (0 means Sub#1)
-        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User,1))
+        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User, 1))
 
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
@@ -64,7 +66,7 @@ class DRGO_env(env_utils, env_agent_utils):
 
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
-        self.T = 0                                           # initialize rewards)
+        self.T = 0  # initialize rewards)
 
         """ ============================ """
         """     Environment Settings     """
@@ -83,24 +85,25 @@ class DRGO_env(env_utils, env_agent_utils):
         # Re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
 
-        self.T = self._Time()    # Generate self.T
+        self.T = self._Time()  # Generate self.T
         # Calculate distortion rate
         sigma_data = self.sigma_data
 
         # We assume that it follows CLT
         # This function can be changed in the future
         temp_c = 20
-        sigma_sem = np.exp(temp_c*(1-self.o)**2)
-        sigma_tot_sqr = 1/((1/sigma_sem**2)+(1/sigma_data**2))
+        sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
+        sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
 
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = max(np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
-                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold), 0)
+            penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
+                                 (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
         else:
-            penalty = max(np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )),0)
+            penalty = max(np.sum(
+                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
         # print(f"penalty: {penalty}")
-        reward = - self.T - self.pen_coeff*penalty
+        reward = - self.T - self.pen_coeff * penalty
         # print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
         """
         T = 100 
@@ -129,24 +132,31 @@ class DRGO_env(env_utils, env_agent_utils):
         # Re-calculate channel gain
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
 
-        self.T = self._Time()    # Generate self.T
+        self.T = self._Time()  # Generate self.T
         # Calculate distortion rate
         sigma_data = self.sigma_data
 
         # We assume that it follows CLT
         # This function can be changed in the future
         temp_c = 20
-        sigma_sem = np.exp(temp_c*(1-self.o)**2)
-        sigma_tot_sqr = 1/((1/sigma_sem**2)+(1/sigma_data**2))
+        sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
+        sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
 
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = max(np.sum((self.eta**2 * self.Lipschitz/2 - self.eta)*\
-                      (self.Lipschitz**2) * sigma_tot_sqr - self.acc_threshold), 0)
+            penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
+                                 (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
         else:
-            penalty = max(np.sum((1/math.sqrt(2*math.pi)) * self.inf_capacity * np.exp( -1/(4*(self.B**2)*sigma_tot_sqr) )),0)
-        # print(f"penalty: {penalty}")
-        reward = - self.T - self.pen_coeff*penalty
+            penalty = max(np.sum(
+                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
+        if self.drl_algo == "ddpg-ei":
+            pass
+        else:
+            penalty += 0.05 * sum([max(i - 1, 0) for i in self.tau])  # sum tau<1
+            penalty += 0.05 * sum([max(i, 0) for i in self.tau])      # sum tau>0
+            penalty += 0.05 * sum([max(i - 1, 0) for i in self.o])    # o < 1
+            penalty += 0.05 * sum([max(i - 1, 0) for i in self.o])    # o > 0
+        reward = - self.T - self.pen_coeff * penalty
         print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
 
         if step == self.max_step:
@@ -155,7 +165,7 @@ class DRGO_env(env_utils, env_agent_utils):
             done = False
         info = None
 
-        return state_next, [reward, self.T, sigma_tot_sqr,], done, info
+        return state_next, [reward, self.T, sigma_tot_sqr, ], done, info
 
     def reset(self):
         # Base station initialization

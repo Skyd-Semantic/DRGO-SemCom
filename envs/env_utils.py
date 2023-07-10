@@ -6,7 +6,6 @@ class env_utils():
     def __init__(self):
         pass
 
-
     def _channelGain_BS_CU(self):
         """     Free-space path loss    """
         numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)  # Directivity_BS * Directivity_CU * lambda
@@ -42,7 +41,6 @@ class env_utils():
             userList.append([xUser_temp, yUser_temp])
             User_trajectory = np.array(userList)
         return User_trajectory
-
 
     def _distance_Calculated(self, A, B):
         return np.array([np.sqrt(np.sum((A - B) ** 2, axis=1))]).transpose()

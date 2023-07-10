@@ -32,14 +32,13 @@ class env_agent_utils():
         # make output for power (range: [0,1])
         # make output for compression ratio: (range: [0,1])
         tau = action[0][0: self.N_User].astype(float)
-        tau = scipy.special.softmax(tau, axis=None)
-
-        o = action[0][self.N_User: 2 * self.N_User].astype(float)
-        P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float))*self.P_u_max
-
-        # print(f"tau: {tau}")
-        # print(f"o: {o}")
-        # print(f"P_n: {P_n}")
+        if self.drl_algo == "ddpg-ei":
+            tau = scipy.special.softmax(tau, axis=None)
+            o = action[0][self.N_User: 2 * self.N_User].astype(float)
+            P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float)) * self.P_u_max
+        else:
+            o = 3 * action[0][self.N_User: 2 * self.N_User].astype(float)
+            P_n = (action[0][2 * self.N_User: 3 * self.N_User].astype(float)) * 3 * self.P_u_max
 
         return [
             np.array(tau).reshape((1,self.N_User)),
