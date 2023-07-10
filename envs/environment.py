@@ -17,7 +17,6 @@ class DRGO_env(env_utils, env_agent_utils):
         self.G_BS_t = 1  # BS directivity
         self.Z_u = 10000  # Data size
         self.Num_BS = 1  # Number of Base Stations
-        self.N_User = 10  # Number of Users
         self.max_step = args.max_step
 
         # Power setting
