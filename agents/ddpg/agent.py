@@ -231,7 +231,9 @@ class DDPGAgent:
                   item_name=algo_name,
                   folder_name=self.algo_path)
         df_results = pd.DataFrame(list_results, columns= ['episode', 'score'])
-        df_results.to_csv('df_results.csv')
+        result_path = "./results/"
+        file_path = result_path + "{}.csv".format(algo_name)
+        df_results.to_csv(file_path)
 
         """Evaluate the agent."""
         # num_ep_eval = args.max_episode_eval
