@@ -175,7 +175,8 @@ class DDPGAgent:
         plotting_interval = args.plot_interval
         self.total_step = 0
         algo_name = str(num_ep) + "-" + str(num_frames) + \
-                    "-" + str(args.user_num) + "-" + str(args.pen_coeff)
+                    "-" + str(args.user_num) + "-" + str(args.pen_coeff) + \
+                    "-" + args.drl_algo
         """Train the agent."""
         list_results = []
         actor_losses = []
@@ -283,8 +284,9 @@ class DDPGAgent:
         """
         num_ep = args.max_episode
         num_frames = args.max_step
-        algo_name = str(num_ep) + "-" + str(num_frames) +\
-                    "-" + str(args.user_num) + "-" + str(args.pen_coeff)
+        algo_name = str(num_ep) + "-" + str(num_frames) + \
+                    "-" + str(args.user_num) + "-" + str(args.pen_coeff) + \
+                    "-" + args.drl_algo
         actor_item, critic_item = load_item(
             item_name=algo_name,
             folder_name=self.algo_path
