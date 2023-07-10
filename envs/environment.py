@@ -102,7 +102,15 @@ class DRGO_env(env_utils, env_agent_utils):
         else:
             penalty = max(np.sum(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
-        # print(f"penalty: {penalty}")
+        if self.drl_algo == "ddpg-ei":
+            pass
+        else:
+            penalty += 0.05 * np.max(np.sum(self.tau) - 1,0)          # if tau>1 -> add tau-1 to penalty
+            penalty -= 0.05 * np.min(np.sum(self.tau) - 0,0)          # if tau<0 -> add -tau to penalty
+            penalty += 0.05 * sum([max(i - 1, 0) for i in self.o])    # o > 1 -> add (o-1) to penalty
+            penalty -= 0.05 * sum([min(i - 0, 0) for i in self.o])    # o < 0 -> add -o to penalty
+            penalty += 0.05 * sum([max(i - 1, 0) for i in self.P_n])    # Pn < 0 -> add -Pn to penalty
+            penalty -= 0.05 * sum([max(i - 1, 0) for i in self.P_n])    # Pn > 0 -> add (Pn-1) to penalty
         reward = - self.T - self.pen_coeff * penalty
         # print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
         """
@@ -149,13 +157,7 @@ class DRGO_env(env_utils, env_agent_utils):
         else:
             penalty = max(np.sum(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
-        if self.drl_algo == "ddpg-ei":
-            pass
-        else:
-            penalty += 0.05 * sum([max(i - 1, 0) for i in self.tau])  # sum tau<1
-            penalty += 0.05 * sum([max(i, 0) for i in self.tau])      # sum tau>0
-            penalty += 0.05 * sum([max(i - 1, 0) for i in self.o])    # o < 1
-            penalty += 0.05 * sum([max(i - 1, 0) for i in self.o])    # o > 0
+
         reward = - self.T - self.pen_coeff * penalty
         print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
 
