@@ -16,7 +16,6 @@ class env_utils():
 
     def _location_BS_Generator(self):
         BS_location = [self.BS_x, self.BS_y]
-        # print(BS_location)
         return np.array(BS_location)
 
     # Iot initialization
