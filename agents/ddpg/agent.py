@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 from utils.result_utils import *
 from envs.commcal_utils import *
 
+
 class DDPGAgent:
     """DDPGAgent interacting with environment.
 
@@ -37,17 +38,16 @@ class DDPGAgent:
     ):
         """Initialize."""
         self.obs_dim = env.observation_space.shape[0]
-        # print(f"env shape: {env.observation_space.shape}")
         self.action_dim = env.action_space.shape[1]
         # Init Result Manager
-        self.algo_path=args.model_dir
+        self.algo_path = args.model_dir
         self.drl_algo = args.drl_algo
 
         os.makedirs(args.model_dir, exist_ok=True)
         os.makedirs(args.result_path, exist_ok=True)
 
         self.result_manager = ResultManager(
-            data_path = args.result_path
+            data_path=args.result_path
         )
 
         self.memory_size = args.memory_size
@@ -77,12 +77,18 @@ class DDPGAgent:
         print(self.device)
 
         # networks
-        self.actor = Actor(self.obs_dim, self.action_dim).to(self.device)
-        self.actor_target = Actor(self.obs_dim, self.action_dim).to(self.device)
-        self.actor_target.load_state_dict(self.actor.state_dict())
+        if args.ai_network == "cnn":
+            self.actor = Actor(self.obs_dim, self.action_dim).to(self.device)
+            self.actor_target = Actor(self.obs_dim, self.action_dim).to(self.device)
+            self.critic = Critic(self.obs_dim + self.action_dim).to(self.device)
+            self.critic_target = Critic(self.obs_dim + self.action_dim).to(self.device)
+        elif args.ai_network == "resnet9":
+            self.actor = Actor_Resnet9(self.obs_dim, self.action_dim).to(self.device)
+            self.actor_target = Actor_Resnet9(self.obs_dim, self.action_dim).to(self.device)
+            self.critic = Critic_Resnet9(self.obs_dim + self.action_dim).to(self.device)
+            self.critic_target = Critic_Resnet9(self.obs_dim + self.action_dim).to(self.device)
 
-        self.critic = Critic(self.obs_dim + self.action_dim).to(self.device)
-        self.critic_target = Critic(self.obs_dim + self.action_dim).to(self.device)
+        self.actor_target.load_state_dict(self.actor.state_dict())
         self.critic_target.load_state_dict(self.critic.state_dict())
 
         # optimizer
@@ -102,6 +108,7 @@ class DDPGAgent:
         """Select an action from the input state."""
         # if initial random action should be conducted
         if self.total_step < self.initial_random_steps and not self.is_test:
+            # self.actor = Actor(self.obs_dim, self.action_dim).to(self.device)
             selected_action = self.actor(
                 torch.FloatTensor(state).to(self.device)
             ).detach().cpu().numpy()
@@ -176,7 +183,8 @@ class DDPGAgent:
         self.total_step = 0
         algo_name = str(num_ep) + "-" + str(num_frames) + \
                     "-" + str(args.user_num) + "-" + str(args.pen_coeff) + \
-                    "-" + args.drl_algo
+                    "-" + args.drl_algo + "-" + str(args.batch_size) + \
+                    "-" + args.ai_network
         """Train the agent."""
         list_results = []
         actor_losses = []
@@ -232,7 +240,7 @@ class DDPGAgent:
                   item_critic=self.critic,
                   item_name=algo_name,
                   folder_name=self.algo_path)
-        df_results = pd.DataFrame(list_results, columns= ['episode', 'score'])
+        df_results = pd.DataFrame(list_results, columns=['episode', 'score'])
         result_path = "./results/"
         file_path = result_path + "{}.csv".format(algo_name)
         df_results.to_csv(file_path)
@@ -249,24 +257,24 @@ class DDPGAgent:
         #     time  = []
         #     sigma_tot_sqr = []
 
-            # for step in range(1, num_frames_eval + 1):
-            #     self.total_step += 1
-            #     action = self.select_action(state)
-            #     state_next, results, done, info = self.step_eval(action, step)
-            #     state = state_next
-            #     # Results: [reward, trans_time, distort_tot, ]
-            #     score = score + results[0]
-            #
-            #     time.append(results[1])
-            #     sigma_tot_sqr.append(results[2])
-            #     # if episode ends
-            #     if done:
-            #         print(f"done: step: {step} of episode: {self.episode}")
-            #         scores.append(score/num_frames_eval)
-            #         break
-            #
-            # time_avg = np.average(np.array(time))
-            # sigma_avg = np.average(np.array(sigma_tot_sqr))
+        # for step in range(1, num_frames_eval + 1):
+        #     self.total_step += 1
+        #     action = self.select_action(state)
+        #     state_next, results, done, info = self.step_eval(action, step)
+        #     state = state_next
+        #     # Results: [reward, trans_time, distort_tot, ]
+        #     score = score + results[0]
+        #
+        #     time.append(results[1])
+        #     sigma_tot_sqr.append(results[2])
+        #     # if episode ends
+        #     if done:
+        #         print(f"done: step: {step} of episode: {self.episode}")
+        #         scores.append(score/num_frames_eval)
+        #         break
+        #
+        # time_avg = np.average(np.array(time))
+        # sigma_avg = np.average(np.array(sigma_tot_sqr))
 
         # self.result_manager.update_setting_value(
         #     noise_lvl=mW2dBm(self.env.naught),
