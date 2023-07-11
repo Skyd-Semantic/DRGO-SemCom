@@ -59,6 +59,8 @@ def get_arguments():
     """ ======================================================== """
     """ ===================== Agent config ===================== """
     """ ======================================================== """
+    parser.add_argument("--ai-network", type=str, default="cnn",
+                        help="AI network type")
     parser.add_argument("--drl-algo", choices=['ddpg-ei', 'ddpg'],
                         default='ddpg-ei',
                         help="choice of DRL algorithm")
