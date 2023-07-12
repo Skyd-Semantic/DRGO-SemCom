@@ -11,6 +11,7 @@ from envs.env_agent_utils import *
 class DRGO_env(env_utils, env_agent_utils):
     def __init__(self, args):
         # Network setting
+        self.penalty = 0
         self.noise = args.noise
         self.lamda = args.lamda
         self.N_User = args.user_num
@@ -74,6 +75,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
         self.action_space = self._wrapAction()
+        print(f"O Space: {np.shape(self.observation_space)} | A Space: {np.shape(self.action_space)}")
 
     def step(self, action, step):
         self.tau, self.o, self.P_n = self._decomposeAction(action)
@@ -99,6 +101,7 @@ class DRGO_env(env_utils, env_agent_utils):
         if self.semantic_mode == "learn":
             penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
                                  (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
+            self.penalty = penalty
         else:
             penalty = max(np.sum(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
