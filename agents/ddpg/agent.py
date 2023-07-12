@@ -104,6 +104,10 @@ class DDPGAgent:
         # mode: train / test
         self.is_test = False
 
+        self.o_avg = 0
+        self.p_avg = 0
+        self.pen_avg = 0
+
     def select_action(self, state: np.ndarray) -> np.ndarray:
         """Select an action from the input state."""
         # if initial random action should be conducted
@@ -199,10 +203,16 @@ class DDPGAgent:
             # critic_losses = []
             # scores = []
             # reward_list = []
+            self.o_avg = 0
+            self.p_avg = 0
+            self.pen_avg = 0
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action, step)
+                self.o_avg += np.average(self.env.o)
+                self.p_avg += np.average(self.env.P_n)
+                self.pen_avg += self.env.penalty
                 state = state_next
                 score = score + reward
                 # if training is ready
@@ -226,7 +236,9 @@ class DDPGAgent:
                 if done:
                     scores.append(score)
                     list_results.append([self.episode, score])
-                    print(f" ======= done: step: {step} of episode: {self.episode} | score: {score} ======= ")
+                    print(f" ======= done: step: {step} of episode: {self.episode} | "
+                          f" score: {score} ======= | avg o: {self.o_avg/num_frames} | "
+                          f" avg P: {self.p_avg/num_frames} | avg pen: {self.pen_avg/num_frames}")
                     break
         if args.save_flag:
             save_results(
