@@ -9,9 +9,9 @@ class env_agent_utils:
 
     def _wrapState(self):
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
-        state = np.array(self.ChannelGain).reshape(1, -1)
-        # state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
-        #                         np.array(self.User_trajectory).reshape(1, -1)), axis=1)
+        # state = np.array(self.ChannelGain).reshape(1, -1)
+        state = np.concatenate((np.array(self.ChannelGain).reshape(1, -1), np.array(self.U_location).reshape(1, -1),
+                                np.array(self.User_trajectory).reshape(1, -1)), axis=1)
         return state
 
     def _decomposeState(self, state):
@@ -19,7 +19,7 @@ class env_agent_utils:
         U_location = state[self.N_User: 2 * self.N_User + 2]
         User_trajectory = state[self.N_User + 2: 2 * self.N_User + 4]
         return [
-            np.array(H) #, np.array(U_location), np.array(User_trajectory)
+            np.array(H) , np.array(U_location), np.array(User_trajectory)
         ]
 
     def _wrapAction(self):
