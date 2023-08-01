@@ -105,6 +105,10 @@ class DRGO_env(env_utils, env_agent_utils):
         else:
             penalty = max(np.sum(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
+            print(f"================================")
+            print(f"{penalty}")
+            print(f"==")
+            print(f"================================")
         if self.drl_algo == "ddpg-ei":
             pass
         else:
@@ -121,7 +125,7 @@ class DRGO_env(env_utils, env_agent_utils):
         - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
         - Print and observe the distribution of the constraints -> decide the alpha
         """
-        if step == (self.max_step):
+        if step == self.max_step:
             done = True
         else:
             done = False
