@@ -104,10 +104,6 @@ class DDPGAgent:
         # mode: train / test
         self.is_test = False
 
-        self.o_avg = 0
-        self.p_avg = 0
-        self.pen_avg = 0
-
     def select_action(self, state: np.ndarray) -> np.ndarray:
         """Select an action from the input state."""
         # if initial random action should be conducted
@@ -203,18 +199,30 @@ class DDPGAgent:
             # critic_losses = []
             # scores = []
             # reward_list = []
-            self.o_avg = 0
-            self.p_avg = 0
-            self.pen_avg = 0
+
+            pen_avg = 0
+            score, pen_tot, E_tot, Iu_tot, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
+            sig_tot_avg, sig_sem_avg, sig_data_avg = 0, 0, 0
+            beta_avg, p_avg, o_avg, data_rate, time_avg = 0, 0, 0, 0, 0, 0
+            actor_avg, critic_avg = 0, 0
+
             for step in range(1, num_frames + 1):
                 self.total_step += 1
                 action = self.select_action(state)
                 state_next, reward, done, info = self.step(action, step)
-                self.o_avg += np.average(self.env.o)
-                self.p_avg += np.average(self.env.P_n)
-                self.pen_avg += self.env.penalty
                 state = state_next
+
                 score = score + reward
+                sig_data_avg += np.average(self.env.sigma_data)
+                sig_tot_avg  += np.average(self.env.sigma_tot_sqr)
+                sig_sem_avg += np.average(self.env.sigma_sem)
+                beta_avg += np.average(self.env.tau)
+                o_avg += np.average(self.env.o)
+                p_avg += np.average(self.env.P_n)
+                pen_avg += self.env.penalty
+                data_rate += np.average(self.env.DataRate)
+                time_avg  += np.average(self.env.T)
+
                 # if training is ready
                 if (
                         len(self.memory) >= self.batch_size
@@ -234,12 +242,15 @@ class DDPGAgent:
                     )
                 # if episode ends
                 if done:
-                    scores.append(score)
-                    list_results.append([self.episode, score])
-                    print(f" ======= done: step: {step} of episode: {self.episode} | "
-                          f" score: {score} ======= | avg o: {self.o_avg/num_frames} | "
-                          f" avg P: {self.p_avg/num_frames} | avg pen: {self.pen_avg/num_frames}")
                     break
+            scores.append(score)
+            list_results.append([self.episode, score, time_avg / step,
+                                 sig_data_avg / step, sig_tot_avg / step, sig_sem_avg / step,
+                                 o_avg / step, p_avg / step, pen_avg / step,
+                                 data_rate * 10e-6 / step])
+            print(f" ======= done: step: {step} of episode: {self.episode} | "
+                  f" score: {score} ======= | avg o: {o_avg / num_frames} | "
+                  f" avg P: {p_avg / num_frames} | avg pen: {pen_avg / num_frames}")
         if args.save_flag:
             save_results(
                 scores,
@@ -248,6 +259,12 @@ class DDPGAgent:
                 reward_list,
                 algo_name
             )
+        df_results = pd.DataFrame(list_results, columns=['episode', 'score', 't_avg',
+                                                         'sigma data', 'sigma total', 'sigma semantic',
+                                                         'o_avg', 'p_avg', 'pen_avg', 'rate_avg'])
+        result_path = "./results/"
+        file_path = result_path + "{}.csv".format(algo_name)
+        df_results.to_csv(file_path)
         save_item(item_actor=self.actor,
                   item_critic=self.critic,
                   item_name=algo_name,
