@@ -96,7 +96,7 @@ class DRGO_env(env_utils, env_agent_utils):
         temp_c = 20
         sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
         sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
-
+        self.sigma_tot_sqr = sigma_tot_sqr
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
             penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
