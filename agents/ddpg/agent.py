@@ -185,7 +185,7 @@ class DDPGAgent:
                     "-" + str(args.user_num) + "-" + str(args.pen_coeff) + \
                     "-" + args.drl_algo + "-" + str(args.batch_size) + \
                     "-" + args.ai_network + "-" + args.semantic_mode + \
-                    "-" + str(args.user_num) + "-" + str(args.power_u_max)
+                    "-" + str(args.user_num) + "-" + str(args.poweru-max)
         # """Train the agent."""
         list_results = []
         actor_losses = []
