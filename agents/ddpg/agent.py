@@ -203,7 +203,7 @@ class DDPGAgent:
             pen_avg = 0
             score, pen_tot, E_tot, Iu_tot, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
             sig_tot_avg, sig_sem_avg, sig_data_avg = 0, 0, 0
-            beta_avg, p_avg, o_avg, data_rate, time_avg = 0, 0, 0, 0, 0, 0
+            beta_avg, p_avg, o_avg, data_rate, time_avg = 0, 0, 0, 0, 0
             actor_avg, critic_avg = 0, 0
 
             for step in range(1, num_frames + 1):
