@@ -24,7 +24,7 @@ class DRGO_env(env_utils, env_agent_utils):
 
         # Power setting
         self.P_u_max = args.poweru_max
-        self.eta = 0.7  # de tinh R_u
+        self.eta = args.ai_lr
         self.naught = 3.9811 * (10 ** (-21))  # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
@@ -45,6 +45,10 @@ class DRGO_env(env_utils, env_agent_utils):
 
         self.sigma_data = 0.01
         self.semantic_mode = args.semantic_mode
+        self.OSigmaMapping = {
+            'Comp. Ratio': [192, 96, 48, 32, 24, 16, 12, 10, 9, 8, 6, 4, 3, 2],
+            'Loss': [0.799, 0.539, 0.337, 0.249, 0.193, 0.131, 0.098, 0.079, 0.069, 0.060, 0.034, 0.020, 0.017, 0.015]
+        }
 
         """ =============== """
         """     Actions     """
@@ -67,7 +71,7 @@ class DRGO_env(env_utils, env_agent_utils):
 
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
         self.commonDataRate = self._calculateDataRate(self.ChannelGain)
-        self.T = 0  # initialize rewards)
+        self.T = 0
 
         """ ============================ """
         """     Environment Settings     """
@@ -94,7 +98,10 @@ class DRGO_env(env_utils, env_agent_utils):
         # We assume that it follows CLT
         # This function can be changed in the future
         temp_c = 20
-        sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
+        # sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
+        # print(f"sem: {np.shape(sigma_sem)}")
+        sigma_sem, self.o_fixed = self._OSigmaMapping()
+        # print(f"sem2: {np.shape(sigma_sem)}|{sigma_sem}|{self.o}")
         sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
         self.sigma_tot_sqr = sigma_tot_sqr
         self.sigma_sem = sigma_sem
@@ -119,7 +126,8 @@ class DRGO_env(env_utils, env_agent_utils):
             penalty -= 2 * sum([min(i - 0, 0) for i in self.o[0]])  # o < 0 -> add -o to penalty
             penalty += 2 * sum([max(i - 1, 0) for i in self.P_n[0]])  # Pn < 0 -> add -Pn to penalty
             penalty -= 2 * sum([max(i - 1, 0) for i in self.P_n[0]])  # Pn > 0 -> add (Pn-1) to penalty
-        reward = - self.T + self.pen_coeff * penalty
+
+        reward = - self.pen_coeff * penalty  #  - self.T - self.pen_coeff * penalty
         # print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
         """
         T = 100 
