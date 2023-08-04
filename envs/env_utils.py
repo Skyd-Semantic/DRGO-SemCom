@@ -2,7 +2,7 @@ import numpy as np
 from utils.setting_setup import *
 import scipy
 
-class env_utils():
+class env_utils:
     def __init__(self):
         pass
 
@@ -81,6 +81,19 @@ class env_utils():
 
     def _Time(self):
         self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
-        T = (self.o * self.tau) / self.DataRate
+        T = (28000 * self.o * self.tau) / self.DataRate
         # print(f"Time: {T} - {np.sum(T)}")
         return np.sum(T)
+
+    def _OSigmaMapping(self):
+        o_values = [x / (len(self.OSigmaMapping['Comp. Ratio']) - 1)
+                    for x in range(len(self.OSigmaMapping['Comp. Ratio']))]
+        chosen_comp_loss = []
+        chosen_comp_ratio = []
+        for o in self.o[0]:
+            closest_index = min(range(len(self.OSigmaMapping["Comp. Ratio"])), key=lambda i: abs(o_values[i] - o))
+            closest_comp_ratio = self.OSigmaMapping["Comp. Ratio"][closest_index]
+            index = self.OSigmaMapping["Comp. Ratio"].index(closest_comp_ratio)
+            chosen_comp_ratio.append(closest_comp_ratio)
+            chosen_comp_loss.append(self.OSigmaMapping["Loss"][index])
+        return np.array([chosen_comp_loss]), np.array([chosen_comp_ratio])
