@@ -202,10 +202,11 @@ class DDPGAgent:
             # reward_list = []
 
             pen_avg = 0
-            score, pen_tot, E_tot, Iu_tot, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
+            score, pen_tot, E_tot, o_fixed_avg, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
             sig_tot_avg, sig_sem_avg, sig_data_avg = 0, 0, 0
             beta_avg, p_avg, o_avg, data_rate, time_avg = 0, 0, 0, 0, 0
             actor_avg, critic_avg = 0, 0
+
 
             for step in range(1, num_frames + 1):
                 self.total_step += 1
@@ -223,6 +224,7 @@ class DDPGAgent:
                 pen_avg += self.env.penalty
                 data_rate += np.average(self.env.DataRate)
                 time_avg  += np.average(self.env.T)
+                o_fixed_avg += np.average(self.env.o_fixed)
 
                 # if training is ready
                 if (
@@ -245,13 +247,15 @@ class DDPGAgent:
                 if done:
                     break
             scores.append(score)
-            list_results.append([self.episode, score, time_avg / step,
+            list_results.append([self.episode, score , time_avg / step,
                                  sig_data_avg / step, sig_tot_avg / step, sig_sem_avg / step,
                                  o_avg / step, p_avg / step, pen_avg / step,
                                  data_rate * 10e-6 / step])
+            # print(list_results)
             print(f" ======= done: step: {step} of episode: {self.episode} | "
-                  f" score: {score} ======= | avg o: {o_avg / num_frames} | "
-                  f" avg P: {p_avg / num_frames} | avg pen: {pen_avg / num_frames}")
+                  f" score: {score / step} ======= | avg P: {p_avg / num_frames} | avg pen: {args.pen_coeff * pen_avg / num_frames} |"
+                  f"avg o: {o_avg / num_frames} | avg fixed o: {o_fixed_avg / num_frames} |"
+                  f" avg T: {time_avg / step} | sigma tot: {sig_tot_avg/step} | sigma data: {sig_data_avg/step} | sigma sem: {sig_sem_avg/step}")
         if args.save_flag:
             save_results(
                 scores,
@@ -270,10 +274,6 @@ class DDPGAgent:
                   item_critic=self.critic,
                   item_name=algo_name,
                   folder_name=self.algo_path)
-        df_results = pd.DataFrame(list_results, columns=['episode', 'score'])
-        result_path = "./results/"
-        file_path = result_path + "{}.csv".format(algo_name)
-        df_results.to_csv(file_path)
 
         """Evaluate the agent."""
         # num_ep_eval = args.max_episode_eval
