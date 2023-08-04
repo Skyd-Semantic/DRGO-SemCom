@@ -55,6 +55,8 @@ def get_arguments():
     """ ======================================================== """
     parser.add_argument("--L", type=float, default=50,
                         help="Lipschitz smooth variables")
+    parser.add_argument("--ai-lr", type=float, default=0.05,
+                        help="semantic AI learning rate")
 
     """ ======================================================== """
     """ ===================== Agent config ===================== """
