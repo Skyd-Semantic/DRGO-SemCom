@@ -102,7 +102,8 @@ class DRGO_env(env_utils, env_agent_utils):
         # print(f"sem: {np.shape(sigma_sem)}")
         sigma_sem, self.o_fixed = self._OSigmaMapping()
         # print(f"sem2: {np.shape(sigma_sem)}|{sigma_sem}|{self.o}")
-        sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
+        # sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
+        sigma_tot_sqr = (sigma_sem ** 2) + (sigma_data ** 2)
         self.sigma_tot_sqr = sigma_tot_sqr
         self.sigma_sem = sigma_sem
         # Goal-oriented penalty
