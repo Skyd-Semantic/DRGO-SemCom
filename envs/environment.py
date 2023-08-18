@@ -113,7 +113,7 @@ class DRGO_env(env_utils, env_agent_utils):
             self.penalty = penalty
         else:
             penalty = max(np.sum(
-                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
+                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(- (self.B ** 2) / (2  * sigma_tot_sqr))), 0)
             self.penalty = penalty
         if self.drl_algo == "ddpg-ei":
             pass
