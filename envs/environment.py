@@ -59,7 +59,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.tau = np.random.randint(0, self.N_User, size=[self.N_User, 1])
         # eta is AP-Allocation. It is an array with form of Num_Nodes interger number,
         # value change from [0:Num_APs-1] (0 means Sub#1)
-        self.P_n = np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User, 1))
+        self.P_n = dBm2W(np.reshape((np.random.rand(1, self.N_User) * self.P_u_max), (self.N_User, 1)))
 
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
