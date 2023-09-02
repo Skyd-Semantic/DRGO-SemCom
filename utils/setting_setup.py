@@ -11,6 +11,8 @@ def get_arguments():
                         help="one manual random seed")
     parser.add_argument("--n-seed", type=int, default=1,
                         help="number of runs")
+    parser.add_argument("--dv", type=int, default=0,
+                        help="Index of GPU")
 
     # --------------------- Path
     parser.add_argument("--data-dir", type=Path, default="D:/Datasets/",
