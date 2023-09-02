@@ -172,7 +172,7 @@ class DRGO_env(env_utils, env_agent_utils):
                                  (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
         else:
             penalty = max(np.sum(
-                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
+                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.BD ** 2) * sigma_tot_sqr))), 0)
 
         reward = - self.T - self.pen_coeff * penalty
         print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
