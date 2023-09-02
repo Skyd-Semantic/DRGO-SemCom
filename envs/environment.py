@@ -29,6 +29,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.naught = 3.9811 * (10 ** (-21))  # -174 dBm/Hz -> W/Hz
         # Bandwidth
         self.B = args.bandwidth
+        self.BD = 0.15
 
         # Base station initialization
         self.BS_x = 0
@@ -114,7 +115,7 @@ class DRGO_env(env_utils, env_agent_utils):
             self.penalty = penalty
         else:
             penalty = max(np.sum(
-                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(- (self.B ** 2) / (2  * sigma_tot_sqr))), 0)
+                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(- (self.BD ** 2) / (2  * sigma_tot_sqr))), 0)
             self.penalty = penalty
         if self.drl_algo == "ddpg-ei":
             pass
