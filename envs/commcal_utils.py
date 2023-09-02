@@ -12,8 +12,8 @@ def dBm2mW(dBm):
     return 10 ** ((dBm) / 10.)
 
 
-def dBm2W(W):
-    return 10 ** (W / 10) / 1000
+def dBm2W(dBm):
+    return 10 ** (dBm / 10) / 1000
 
 
 def W2dBm(W):
