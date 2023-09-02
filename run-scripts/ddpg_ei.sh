@@ -1,5 +1,0 @@
-python main.py --initial-steps 50000 --max-episode 3000 --max-step 200 --max-episode-eval 5 --max-step-eval 50 --semantic-mode learn --pen-coeff 0.100  --noise 0.01 --lamda 0.001 --poweru-max 10 --plot-interval 400000 --user-num 100 --drl-algo ddpg-ei
-python main.py --initial-steps 50000 --max-episode 3000 --max-step 200 --max-episode-eval 5 --max-step-eval 50 --semantic-mode learn --pen-coeff 0.100  --noise 0.01 --lamda 0.001 --poweru-max 10 --plot-interval 400000 --user-num 100 --drl-algo ddpg
-python main.py --initial-steps 50000 --max-episode 3000 --max-step 200 --max-episode-eval 5 --max-step-eval 50 --semantic-mode infer --pen-coeff 0.102  --noise 0.01 --lamda 0.001 --poweru-max 10 --plot-interval 400000 --user-num 100 --drl-algo ddpg-ei
-python main.py --initial-steps 50000 --max-episode 3000 --max-step 200 --max-episode-eval 5 --max-step-eval 50 --semantic-mode infer --pen-coeff 0.102  --noise 0.01 --lamda 0.001 --poweru-max 10 --plot-interval 400000 --user-num 100 --drl-algo ddpg
-
