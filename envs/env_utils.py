@@ -83,7 +83,11 @@ class env_utils:
         self.DataRate, self.deno, self.nume = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
         T = (28000 * self.o) / self.DataRate
         # print(f"Time: {T} - {np.sum(T)}")
-        return np.sum(T)
+        return T
+
+    def _Energy(self):
+        E = self.P_n * self.Time
+        return E
 
     def _OSigmaMapping(self):
         o_values = [x / (len(self.OSigmaMapping['Comp. Ratio']) - 1)
