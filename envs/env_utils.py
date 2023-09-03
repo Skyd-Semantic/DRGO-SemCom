@@ -86,7 +86,7 @@ class env_utils:
         return T
 
     def _Energy(self):
-        E = self.P_n * self.Time
+        E = self.P_n * self.T
         return E
 
     def _OSigmaMapping(self):
