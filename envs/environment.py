@@ -110,11 +110,11 @@ class DRGO_env(env_utils, env_agent_utils):
         self.sigma_sem = sigma_sem
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
+            penalty = max(np.average((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
                                  (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
             self.penalty = penalty
         else:
-            penalty = max(np.sum(
+            penalty = max(np.average(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(- (self.BD ** 2) / (2  * sigma_tot_sqr))), 0)
             self.penalty = penalty
         if self.drl_algo == "ddpg-ei":
@@ -128,7 +128,7 @@ class DRGO_env(env_utils, env_agent_utils):
             penalty -= 2 * sum([max(i - 1, 0) for i in self.P_n[0]])  # Pn > 0 -> add (Pn-1) to penalty
 
         self.E = self._Energy()
-        reward =  - np.sum(self.E) - self.pen_coeff * penalty
+        reward =  - np.average(self.E) - self.pen_coeff * penalty
         # print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
         """
         T = 100 
@@ -169,13 +169,14 @@ class DRGO_env(env_utils, env_agent_utils):
 
         # Goal-oriented penalty
         if self.semantic_mode == "learn":
-            penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
+            penalty = max(np.average((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
                                  (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
         else:
-            penalty = max(np.sum(
+            penalty = max(np.average(
                 (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.BD ** 2) * sigma_tot_sqr))), 0)
 
-        reward = - self.T - self.pen_coeff * penalty
+        self.E = self._Energy()
+        reward =  - np.average(self.E) - self.pen_coeff * penalty
         print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
 
         if step == self.max_step:
