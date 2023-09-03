@@ -127,7 +127,8 @@ class DRGO_env(env_utils, env_agent_utils):
             penalty += 2 * sum([max(i - 1, 0) for i in self.P_n[0]])  # Pn < 0 -> add -Pn to penalty
             penalty -= 2 * sum([max(i - 1, 0) for i in self.P_n[0]])  # Pn > 0 -> add (Pn-1) to penalty
 
-        reward =  - self.T - self.pen_coeff * penalty
+        self.E = self._Energy()
+        reward =  - np.sum(self.E) - self.pen_coeff * penalty
         # print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
         """
         T = 100 
