@@ -200,7 +200,7 @@ class DDPGAgent:
             # reward_list = []
 
             pen_avg = 0
-            score, pen_tot, E_tot, o_fixed_avg, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
+            score, pen_tot, E_avg, o_fixed_avg, IG_tot, T_tot = 0, 0, 0, 0, 0, 0
             sig_tot_avg, sig_sem_avg, sig_data_avg = 0, 0, 0
             beta_avg, p_avg, o_avg, data_rate, time_avg = 0, 0, 0, 0, 0
             actor_avg, critic_avg = 0, 0
@@ -222,6 +222,8 @@ class DDPGAgent:
                 pen_avg += self.env.penalty
                 data_rate += np.average(self.env.DataRate)
                 time_avg  += np.average(self.env.T)
+                E_avg += np.average(self.env.E)
+
                 o_fixed_avg += np.average(self.env.o_fixed)
 
                 # if training is ready
@@ -251,11 +253,12 @@ class DDPGAgent:
                                  data_rate * 10e-6 / step])
             # print(list_results)
 
-            print(f" ======= done: step: {step} of episode: {self.episode} |"
-                  f"score: {score / step} ======= | avg P: {p_avg / num_frames} | avg P dBm: {W2dBm(p_avg / num_frames)}| "
+            print(f" ======= done: step: {step} of episode: {self.episode} | score: {score / step} ======= | "
+                  f"avg P: {p_avg / num_frames} | avg P dBm: {W2dBm(p_avg / num_frames)}| "
                   f"avg pen: {args.pen_coeff * pen_avg / num_frames} | "
                   f"avg o: {o_avg / num_frames} | avg fixed o: {o_fixed_avg / num_frames} |"
-                  f"avg T: {time_avg / step} | sigma tot: {sig_tot_avg/step} | "
+                  f"avg T: {time_avg / step} | avg E: {E_avg / step}) "
+                  f"sigma tot: {sig_tot_avg/step} | "
                   f"sigma data: {sig_data_avg/step} | sigma sem: {sig_sem_avg/step}")
 
         if args.save_flag:
