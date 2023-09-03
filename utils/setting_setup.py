@@ -48,7 +48,7 @@ def get_arguments():
     parser.add_argument("--lamda", type=float, default=0.001,
                         help="signal wave length")
     parser.add_argument("--poweru-max", type=float, default=10,
-                        help="max power of user threshold")
+                        help="max power of user threshold (dBm)")
     parser.add_argument("--bandwidth", type=float, default=100,
                         help="signal bandwidth")
 
