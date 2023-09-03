@@ -44,7 +44,7 @@ class env_agent_utils:
         return [
             np.array(tau).reshape((1, self.N_User)),
             np.array(o).reshape((1, self.N_User)),
-            dBm2W(np.array(P_n).reshape((1, self.N_User)))
+            np.array(P_n).reshape((1, self.N_User))
         ]
 
         # return [
