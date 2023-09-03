@@ -16,19 +16,20 @@ def save_results(
                  reward_list: List[float],
                  algo
                  ):
-    result_path = "./results/"
-    if not os.path.exists(result_path):
-        os.makedirs(result_path)
-
-    if len(scores):
-        file_path = result_path + "{}.h5".format(algo)
-        print("File path: " + file_path)
-
-        with h5py.File(file_path, 'w') as hf:
-            hf.create_dataset('reward', data=reward_list)
-            hf.create_dataset('scores', data=scores)
-            hf.create_dataset('actor_losses', data=actor_losses)
-            hf.create_dataset('critic_losses', data=critic_losses)
+    # result_path = "./results/"
+    # if not os.path.exists(result_path):
+    #     os.makedirs(result_path)
+    #
+    # if len(scores):
+    #     file_path = result_path + "{}.h5".format(algo)
+    #     print("File path: " + file_path)
+    #
+    #     with h5py.File(file_path, 'w') as hf:
+    #         hf.create_dataset('reward', data=reward_list)
+    #         hf.create_dataset('scores', data=scores)
+    #         hf.create_dataset('actor_losses', data=actor_losses)
+    #         hf.create_dataset('critic_losses', data=critic_losses)
+    pass
 
 def save_item(item_actor, item_critic, item_name, folder_name):
     if not os.path.exists(folder_name):
