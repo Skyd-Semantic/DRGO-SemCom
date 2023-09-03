@@ -250,12 +250,14 @@ class DDPGAgent:
                                  o_avg / step, p_avg / step, pen_avg / step,
                                  data_rate * 10e-6 / step])
             # print(list_results)
-            print(f" ======= done: step: {step} of episode: {self.episode} | "
+
+            print(f" ======= done: step: {step} of episode: {self.episode} |"
                   f"score: {score / step} ======= | avg P: {p_avg / num_frames} | avg P dBm: {W2dBm(p_avg / num_frames)}| "
                   f"avg pen: {args.pen_coeff * pen_avg / num_frames} | "
                   f"avg o: {o_avg / num_frames} | avg fixed o: {o_fixed_avg / num_frames} |"
                   f"avg T: {time_avg / step} | sigma tot: {sig_tot_avg/step} | "
                   f"sigma data: {sig_data_avg/step} | sigma sem: {sig_sem_avg/step}")
+
         if args.save_flag:
             save_results(
                 scores,
