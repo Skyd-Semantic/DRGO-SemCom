@@ -254,12 +254,12 @@ class DDPGAgent:
             # print(list_results)
 
             print(f" ======= done: step: {step} of episode: {self.episode} | score: {score / step} ======= | "
-                  f"avg P: {p_avg / num_frames} | avg P dBm: {W2dBm(p_avg / num_frames)}| "
-                  f"avg pen: {args.pen_coeff * pen_avg / num_frames} | "
-                  f"avg o: {o_avg / num_frames} | avg fixed o: {o_fixed_avg / num_frames} |"
-                  f"avg T: {time_avg / step} | avg E: {E_avg / step}) "
-                  f"sigma tot: {sig_tot_avg/step} | "
-                  f"sigma data: {sig_data_avg/step} | sigma sem: {sig_sem_avg/step}")
+                  f"avg P: {round(p_avg / num_frames, 4)} | avg P dBm: {round(W2dBm(p_avg / num_frames), 4)}| "
+                  f"avg pen: {round(args.pen_coeff * pen_avg / num_frames, 8)} | "
+                  f"avg o: {round(o_avg / num_frames, 4)} | avg fixed o: {round(o_fixed_avg / num_frames)} |"
+                  f"avg T: {round(time_avg / step, 4)} | avg E: {round(E_avg / step, 5)}| "
+                  f"sigma tot: {round(sig_tot_avg/step, 4)} | "
+                  f"sigma data: {round(sig_data_avg/step, 4)} | sigma sem: {round(sig_sem_avg/step, 4)}")
 
         if args.save_flag:
             save_results(
