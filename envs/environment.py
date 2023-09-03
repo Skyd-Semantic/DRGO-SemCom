@@ -24,7 +24,7 @@ class DRGO_env(env_utils, env_agent_utils):
         self.drl_algo = args.drl_algo
 
         # Power setting
-        self.P_u_max = args.poweru_max
+        self.P_u_max = W2dBm(args.poweru_max)
         self.eta = args.ai_lr
         self.naught = 3.9811 * (10 ** (-21))  # -174 dBm/Hz -> W/Hz
         # Bandwidth
