@@ -72,16 +72,16 @@ class env_utils:
         Denominator = N_0 * B_k
         Datarate = B_k np.log2(1+Numerator/Denominator)
         """
-        Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
+        Numerator = channelGain_BS_CU*self.P_n         # self.P must be a list among all users [1, ... , U]
         Denominator = self.B * self.tau * self.naught       # self.B must be a list among all users [1, ... , U]
 
         DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
 
-        return DataRate
+        return DataRate, Denominator, Numerator
 
     def _Time(self):
-        self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
-        T = (28000 * self.o * self.tau) / self.DataRate
+        self.DataRate, self.deno, self.nume = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
+        T = (28000 * self.o) / self.DataRate
         # print(f"Time: {T} - {np.sum(T)}")
         return np.sum(T)
 
