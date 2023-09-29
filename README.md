@@ -1,4 +1,5 @@
 # Distortion Rate Resilience: A joint communication and computation framework for Goal-Oriented Semantic Communication
+Original paper: https://arxiv.org/abs/2309.14587
 
 # Citation
 Anyone who want to use this code, please cite the following references
