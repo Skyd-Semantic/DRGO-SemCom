@@ -1,5 +1,4 @@
-# Distortion Rate Resilience: A joint communication and computation framework for Goal-Oriented Semantic Communication
-## Transactions on Mobile Computing, Sep. 2024
+# Distortion Resilience for Goal-Oriented Semantic Communication, Transactions on Mobile Computing, Sep. 2024
 Original paper: https://arxiv.org/abs/2309.14587
 
 Part of this work is presented as invited speaker at IEEE ICMLCN 2024
@@ -8,9 +7,10 @@ Part of this work is presented as invited speaker at IEEE ICMLCN 2024
 Anyone who want to use this code, please cite the following references
 ```
 @article{DRGO-SemCom,
-  Title = {Distortion Rate Resilience: A joint communication and computation framework for Goal-Oriented Semantic Communication},
+  Title = {Distortion Resilience for Goal-Oriented Semantic Communication},
   Author = {Minh-Duong Nguyen, Quang-Vinh Do, Zhaohui Yang, Viet Pham, Won-Joo Hwang},
-  journal={IEEE Transactions on SomeThing Special},
+  journal={IEEE Transactions on Mobile Computing},
+  month={Sep.},
   year={2023}
 }
 ```
