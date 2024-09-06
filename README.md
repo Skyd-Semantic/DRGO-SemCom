@@ -8,7 +8,7 @@ Anyone who want to use this code, please cite the following references
 ```
 @article{DRGO-SemCom,
   Title = {Distortion Resilience for Goal-Oriented Semantic Communication},
-  Author = {Minh-Duong Nguyen, Quang-Vinh Do, Zhaohui Yang, Viet Pham, Won-Joo Hwang},
+  Author = {Minh-Duong Nguyen, Quang-Vinh Do, Zhaohui Yang, Won-Joo Hwang, Quoc-Viet Pham},
   journal={IEEE Transactions on Mobile Computing},
   month={Sep.},
   year={2023}
