@@ -1,6 +1,6 @@
 # Distortion Resilience for Goal-Oriented Semantic Communication, Transactions on Mobile Computing, Sep. 2024
 Original paper: https://arxiv.org/abs/2309.14587
-
+Accepted version: https://ieeexplore.ieee.org/document/10689487/
 Part of this work is presented as invited speaker at IEEE ICMLCN 2024
 
 # Citation
